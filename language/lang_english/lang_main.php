@@ -42,20 +42,16 @@ $lang['BBC_IP_CREDITS_STATIC'] = '
 <b><i>Site Administrator</i></b><br />
 <br />
 <br />
-<span style="color: #228822;"><b>Joshua203</b></span><br />
+<span style="color: #228822;"><b>mort</b></span><br />
 <b><i>Staff Leader</i></b><br />
 <br />
 <br />
 <span style="color: #ff5500;"><b>KasLimon</b></span><br />
-<b><i>Junior Developer</i></b><br />
+<b><i>Developer</i></b><br />
 <br />
 <br />
 <span style="color: #ff5500;"><b>Informpro</b></span><br />
-<b><i>Junior Developer</i></b><br />
-<br />
-<br />
-<span style="color: #ff5500;"><b>jhl</b></span><br />
-<b><i>Junior Developer</i></b><br />
+<b><i>Developer</i></b><br />
 <br />
 <br />
 <b><i>Valued Contributors</i></b><br />
@@ -74,12 +70,13 @@ $lang['BBC_IP_CREDITS_STATIC'] = '
 <span style="color: #880088;"><b>Hans</b></span><br />
 <span style="color: #ff5500;"><b>hpl</b></span>&nbsp;<i>(Junior Developer)</i><br />
 <span style="color: #880088;"><b>JANU1535</b></span><br />
+<span style="color: #ff5500;"><b>jhl</b></span>&nbsp;<i>(Junior Developer)</i><br />
+<span style="color: #228822;"><b>Joshua203</b></span><br />
 <span style="color: #880088;"><b>jz</b></span><br />
 <span style="color: #aaff00;"><b>KugeLSichA</b></span><br />
 <span style="color: #0000bb;"><b>Limun</b></span><br />
 <span style="color: #880088;"><b>Lopalong</b></span><br />
 <span style="color: #880088;"><b>moreteavicar</b></span><br />
-<span style="color: #880088;"><b>mort</b></span><br />
 <span style="color: #880088;"><b>novice programmer</b></span><br />
 <span style="color: #dd2222;"><b>ThE KuKa</b></span><br />
 <span style="color: #880088;"><b>Tom</b></span><br />
@@ -137,6 +134,7 @@ $lang = array_merge($lang, array(
 	'GO' => 'Go',
 	'JUMP_TO' => 'Jump to',
 	'SUBMIT' => 'Submit',
+	'UPDATE' => 'Update',
 	'RESET' => 'Reset',
 	'CANCEL' => 'Cancel',
 	'PREVIEW' => 'Preview',
@@ -711,7 +709,7 @@ $lang = array_merge($lang, array(
 	'COPPA' => 'Your account has been created but has to be approved. Please check your e-mail for details.',
 
 	'Registration' => 'Registration Agreement Terms',
-	'Reg_agreement' => 'While the administrators and moderators of this forum will attempt to remove or edit any generally objectionable material as quickly as possible, it is impossible to review every message. Therefore you acknowledge that all posts made to these forums express the views and opinions of the author and not the administrators, moderators or webmaster (except for posts by these people) and hence will not be held liable.<br /><br />You agree not to post any abusive, obscene, vulgar, slanderous, hateful, threatening, sexually-oriented or any other material that may violate any applicable laws. Doing so may lead to you being immediately and permanently banned (and your service provider being informed). The IP address of all posts is recorded to aid in enforcing these conditions. You agree that the webmaster, administrator and moderators of this forum have the right to remove, edit, move or close any topic at any time should they see fit. As a user you agree to any information you have entered above being stored in a database. While this information will not be disclosed to any third party without your consent the webmaster, administrator and moderators cannot be held responsible for any hacking attempt that may lead to the data being compromised.<br /><br />This forum system uses cookies to store information on your local computer. These cookies do not contain any of the information you have entered above; they serve only to improve your viewing pleasure. The e-mail address is used only for confirming your registration details and password (and for sending new passwords should you forget your current one).<br /><br />By clicking &quot;<i>I agree to these terms</i>&quot; you agree to be bound by these conditions. Also be aware that your personal data will be treated in respect to the current laws in the country of the site owner.<br /><br />',
+	'Reg_agreement' => 'While the administrators and moderators of this forum will attempt to remove or edit any generally objectionable material as quickly as possible, it is impossible to review every message. Therefore you acknowledge that all posts made to these forums express the views and opinions of the author and not the administrators, moderators or webmaster (except for posts by these people) and hence will not be held liable.<br /><br />You agree not to post any abusive, obscene, vulgar, slanderous, hateful, threatening, sexually-oriented or any other material that may violate any applicable laws. Doing so may lead to you being immediately and permanently banned (and your service provider being informed). The IP address of all posts is recorded to aid in enforcing these conditions. You agree that the webmaster, administrator and moderators of this forum have the right to remove, edit, move or close any topic at any time should they see fit. As a user you agree to any information you have entered above being stored in a database. While this information will not be disclosed to any third party without your consent the webmaster, administrator and moderators cannot be held responsible for any hacking attempt that may lead to the data being compromised.<br /><br />This forum system uses cookies to store information on your local computer. These cookies do not contain any of the information you have entered above; they serve only to improve your viewing pleasure. The e-mail address is used only for confirming your registration details and password (and for sending new passwords should you forget your current one).<br /><br />By clicking &quot;<i>I agree to these terms</i>&quot; you agree to be bound by these conditions. Also be aware that your personal data will be treated in respect to the current laws in the country of the site owner.<br /><br />In order to use the Services, you must first agree to the Terms. You cannot use the Services if you do not accept the Terms.<br /><br />You can accept the Terms by either clicking to accept or agree to the Terms or by actually using the Services. In this case, you understand and agree that this website will treat your use of the Services as acceptance of the Terms from that point onwards.<br /><br />Please read our policies about data protections: <a href="privacy_policy.php">Privacy Policy</a> e <a href="cookie_policy.php.php">Cookie Policy</a>.<br /><br />',
 
 	'Agreement' => 'Agreement',
 	'Agree_under_13' => 'I agree to these terms and am <b>under</b> 13 years of age',
@@ -1210,7 +1208,7 @@ $lang = array_merge($lang, array(
 	'Recent_topics' => 'Recent Topics', // Recent Topics
 
 	'Topics_Title_Edited' => 'The titles of the selected topics have been edited.',
-	'Edit_title' => 'Title Edit',
+	'TOPIC_LABEL' => 'Topic Label',
 	'PM' => 'PM',
 
 // Start Advanced IP Tools Pack MOD
@@ -2292,8 +2290,6 @@ $lang = array_merge($lang, array(
 	'WEBSITE' => 'Website',
 	'EDIT' => 'Edit',
 	'DELETE' => 'Delete',
-	'YES' => 'Yes',
-	'NO' => 'No',
 
 	'DB_ITEM_VIEW' => 'View Item',
 	'DB_ITEM_UPDATED' => 'Item updated successfully',
@@ -2516,12 +2512,16 @@ $lang = array_merge($lang, array(
 	'COOKIE_POLICY_DISABLE' => 'Disable Cookies',
 	'LEARN_MORE' => 'Learn More...',
 
+	'CP_CLICK_COLOR' => 'Click on the top right color box to apply the color',
+	'CP_CLICK_APPLY' => 'Click to apply this color',
+	'CP_CLICK_APPLY_SHORT' => 'APPLY',
+
+	'PRIVACY_POLICY_LOGIN' => 'By clicking on LOGIN <strong>you specifically agree</strong> with our <a href="privacy_policy.php">Privacy Policy</a> and <a href="cookie_policy.php.php">Cookie Policy</a>',
+
 	)
 );
 
 /*Special Cases, Do not bother to change for another language */
-$lang['YES'] = $lang['Yes'];
-$lang['NO'] = $lang['No'];
 $lang['HL_File_Error'] = $lang['Error_File_Opening'];
 
 $lang['Prune_commands'] = array();

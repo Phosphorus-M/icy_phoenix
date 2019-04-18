@@ -45,7 +45,7 @@
 		<!-- BEGIN switch_allow_autologin -->
 		<tr>
 			<td>&nbsp;</td>
-			<td class="tdnw" style="padding-bottom: 10px;"><span class="genmed">&nbsp;<input type="checkbox" name="autologin" checked="checked" />&nbsp;{L_AUTOLOGIN}</span></td>
+			<td class="tdnw" style="padding-bottom: 10px;"><span class="genmed">&nbsp;<input type="checkbox" name="autologin" checked="checked" />&nbsp;{L_AUTOLOGIN}</span><br /><br /><span class="gensmall">{L_PRIVACY_POLICY_LOGIN}</span></td>
 		</tr>
 		<!-- END switch_allow_autologin -->
 		<tr>
@@ -58,7 +58,7 @@
 	<td class="row1g row-center tw150px" style="padding: 30px; width: 150px;">
 		{L_SOCIAL_CONNECT}
 		<!-- BEGIN social_connect_button -->
-		<a href="{social_connect_button.U_SOCIAL_CONNECT}" title="{social_connect_button.L_SOCIAL_CONNECT}">{social_connect_button.IMG_SOCIAL_CONNECT}</a>
+		<a href="{social_connect_button.U_SOCIAL_CONNECT}" title="{social_connect_button.L_SOCIAL_CONNECT}">{social_connect_button.IMG_SOCIAL_CONNECT}</a><br />
 		<!-- END social_connect_button -->
 	</td>
 	<!-- ENDIF -->

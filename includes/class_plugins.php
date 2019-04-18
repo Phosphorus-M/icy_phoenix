@@ -26,12 +26,13 @@ class class_plugins
 	var $plugins_path = '';
 	var $plugins_settings_path = '';
 
-	var $plugin_includes_array = array('constants', 'common', 'functions');
+	var $plugin_includes_array = array('constants', 'common', 'functions', 'class');
 
 	var $config = array();
 	var $settings = array();
 	var $modules = array();
 	var $list_yes_no = array('Yes' => 1, 'No' => 0);
+	var $registered_plugins = array();
 
 	/**
 	* Instantiate class
@@ -170,7 +171,7 @@ class class_plugins
 
 		$sql_results = array();
 		// We need to force this because in MySQL 5.5.5 the new default DB Engine is InnoDB, not MyISAM any more
-		$sql_engine = "SET storage_engine=MYISAM";
+		$sql_engine = "SET default_storage_engine = MYISAM";
 		$db->sql_return_on_error(true);
 		$db->sql_query($sql_engine);
 		$db->sql_return_on_error(false);
@@ -403,7 +404,7 @@ class class_plugins
 		$result = $db->sql_query($sql);
 
 		$plugin_info = array();
-		while ($row = $db->sql_fetchrow($result))
+		if ($row = $db->sql_fetchrow($result))
 		{
 			$plugin_info = $row;
 		}
@@ -471,7 +472,7 @@ class class_plugins
 
 		if ($clear_cache)
 		{
-			$this->cache_clear();
+			$this->cache_clear(false);
 		}
 	}
 
@@ -488,7 +489,7 @@ class class_plugins
 		$db->sql_return_on_error(false);
 		if ($clear_cache)
 		{
-			$this->cache_clear();
+			$this->cache_clear(false);
 		}
 	}
 
@@ -519,7 +520,7 @@ class class_plugins
 
 		if ($clear_cache)
 		{
-			$this->cache_clear();
+			$this->cache_clear(false);
 		}
 	}
 
@@ -649,7 +650,7 @@ class class_plugins
 
 		if ($settings_details['clear_cache'])
 		{
-			$this->cache_clear();
+			$this->cache_clear(false);
 		}
 	}
 
@@ -753,17 +754,78 @@ class class_plugins
 	/**
 	* Cache clear
 	*/
-	function cache_clear()
+	function cache_clear($full = true)
 	{
 		global $db, $cache, $config, $lang;
 
-		$cache->destroy('config_plugins');
-		$db->clear_cache('config_plugins_');
+		if (!empty($full))
+		{
+			empty_cache_folders();
+		}
+		else
+		{
+			$cache->destroy('config_plugins');
+			$db->clear_cache('config_plugins_');
 
-		$cache->destroy('config_plugins_config');
-		$db->clear_cache('config_plugins_config_');
+			$cache->destroy('config_plugins_config');
+			$db->clear_cache('config_plugins_config_');
+		}
 
 		return true;
+	}
+
+	/**
+	* Registers a plugin.
+	*/
+	function register($plugin_name, $plugin_class)
+	{
+		$this->registered_plugins[$plugin_name] = $plugin_class;
+		$plugin_class->setup($this);
+	}
+
+	/**
+	* Triggers a plugin event.
+	*/
+	function trigger($event_name, array $vars)
+	{
+		$event_method = str_replace('.', '__', $event_name);
+		foreach ($this->registered_plugins as $k => $plugin_class)
+		{
+			if (in_array($event_name, $plugin_class->events))
+			{
+				$return = $plugin_class->{'event_' . $event_method}($vars);
+				// if the function didn't return null, use the new vars provided.
+				if ($return)
+				{
+					$vars = $return;
+				}
+			}
+		}
+		return $vars;
+	}
+
+	/**
+	* Returns the hook files for the plugins.
+	*/
+	function get_hook_files($hook)
+	{
+		global $config;
+
+		$files = array();
+		$tpl_file = $hook . '.tpl';
+		foreach ($this->registered_plugins as $k => $plugin_class)
+		{
+			if (!$config['plugins'][$k]['enabled'])
+			{
+				continue;
+			}
+			if (isset($plugin_class->hooks) && in_array($hook, $plugin_class->hooks))
+			{
+				$plugin_dir = $this->plugins_path . $config['plugins'][$k]['dir'] . 'templates/';
+				$files[] = $this->get_tpl_file($plugin_dir, $tpl_file);
+			}
+		}
+		return $files;
 	}
 
 }

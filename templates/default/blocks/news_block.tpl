@@ -60,7 +60,7 @@
 		<br />
 		<!-- END no_articles -->
 		<!-- BEGIN articles -->
-		{IMG_THL}{IMG_THC}<a href="{articles.U_COMMENT}" class="forumlink">{articles.L_TITLE}</a>{IMG_THR}<table class="forumlinenb" width="100%" cellspacing="0" cellpadding="2" border="0">
+		{IMG_THL}{IMG_THC}<a href="{articles.U_COMMENT}" class="forumlink">{articles.L_FULL_TITLE}</a>{IMG_THR}<table class="forumlinenb" width="100%" cellspacing="0" cellpadding="2" border="0">
 		<tr>
 			<th align="left" colspan="2"><span class="gensmall"><a href="{articles.U_COMMENT}"><img src="{MINIPOST_IMG}" alt="{articles.L_TITLE}" /></a>&nbsp;{L_POSTED}&nbsp;{L_WORD_ON}&nbsp;{articles.POST_DATE}&nbsp;{L_BY}&nbsp;{articles.L_POSTER}</span></th>
 		</tr>
@@ -80,7 +80,7 @@
 		<tr>
 			<td class="cat" colspan="2">
 				<span style="float: right; text-align: right; padding-right: 5px; padding-top: 5px;"><!-- IF not S_BOT --><a href="{articles.U_POST_COMMENT}"><img src="{NEWS_REPLY_IMG}" alt="{L_REPLY_NEWS}" title="{L_REPLY_NEWS}" /></a>&nbsp;<a href="{articles.U_PRINT_TOPIC}" target="_blank"><img src="{NEWS_PRINT_IMG}" alt="{L_PRINT_NEWS}" title="{L_PRINT_NEWS}" /></a>&nbsp;<a href="{articles.U_EMAIL_TOPIC}"><img src="{NEWS_EMAIL_IMG}" alt="{L_EMAIL_NEWS}" title="{L_EMAIL_NEWS}" /></a><!-- ELSE -->&nbsp;<!-- ENDIF --></span>
-				<div class="gensmall" style="text-align: left; padding-left: 5px; padding-top: 5px;">{L_NEWS_SUMMARY}&nbsp;<!-- IF S_NEWS_VIEWS --><a href="{articles.U_VIEWS}"><!-- ENDIF --><b>{articles.COUNT_VIEWS}</b>&nbsp;{L_NEWS_VIEWS}<!-- IF S_NEWS_VIEWS --></a><!-- ENDIF -->&nbsp;{L_NEWS_AND}&nbsp;<!-- IF not S_BOT --><a href="{INDEX_FILE}?{PORTAL_PAGE_ID}topic_id={articles.ID}" rel="nofollow" title="{articles.L_TITLE}"><!-- ENDIF --><b>{articles.COUNT_COMMENTS}</b>&nbsp;{L_NEWS_COMMENTS}<!-- IF not S_BOT --></a><!-- ENDIF --></div>
+				<div class="gensmall" style="text-align: left; padding-left: 5px; padding-top: 5px;">{L_NEWS_SUMMARY}&nbsp;<!-- IF S_NEWS_VIEWS --><a href="{articles.U_VIEWS}"><!-- ENDIF --><b>{articles.COUNT_VIEWS}</b>&nbsp;{L_NEWS_VIEWS}<!-- IF S_NEWS_VIEWS --></a><!-- ENDIF -->&nbsp;{L_NEWS_AND}&nbsp;<!-- IF not S_BOT --><a href="{articles.U_COMMENT}" title="{articles.L_TITLE}"><!-- ENDIF --><b>{articles.COUNT_COMMENTS}</b>&nbsp;{L_NEWS_COMMENTS}<!-- IF not S_BOT --></a><!-- ENDIF --></div>
 			</td>
 		</tr>
 		</table>{IMG_TFL}{IMG_TFC}{IMG_TFR}

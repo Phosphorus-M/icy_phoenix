@@ -108,12 +108,17 @@ switch ($req_version)
 	case '2016102': $current_ip_version = '2.0.16.102'; break;
 	case '2017103': $current_ip_version = '2.0.17.103'; break;
 	case '2018104': $current_ip_version = '2.0.18.104'; break;
-	case '2019105': $current_ip_version = '2.0.19.105'; break;
-
+	case '220105': $current_ip_version = '2.2.0.105'; break;
+	case '221106': $current_ip_version = '2.2.1.106'; break;
+	case '222107': $current_ip_version = '2.2.2.107'; break;
+	case '223108': $current_ip_version = '2.2.3.108'; break;
+	case '224109': $current_ip_version = '2.2.4.109'; break;
+	case '225110': $current_ip_version = '2.2.5.110'; break;
+	case '226111': $current_ip_version = '2.2.6.111'; break;
 }
 
 // We need to force this because in MySQL 5.5.5 the new default DB Engine is InnoDB, not MyISAM any more
-$sql[] = "SET storage_engine=MYISAM";
+$sql[] = "SET default_storage_engine = MYISAM";
 
 // Icy Phoenix Part...
 if (substr($mode, 0, 6) == 'update')
@@ -989,7 +994,7 @@ if (substr($mode, 0, 6) == 'update')
 		$sql[] = "INSERT INTO `" . $table_prefix . "album_config` VALUES ('gif_allowed', '1')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "album_config` VALUES ('desc_length', '512')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "album_config` VALUES ('hotlink_prevent', '0')";
-		$sql[] = "INSERT INTO `" . $table_prefix . "album_config` VALUES ('hotlink_allowed', 'mightygorgon.com,icyphoenix.com')";
+		$sql[] = "INSERT INTO `" . $table_prefix . "album_config` VALUES ('hotlink_allowed', 'icyphoenix.com,lucalibralato.com,mightygorgon.com')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "album_config` VALUES ('personal_gallery', '0')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "album_config` VALUES ('personal_gallery_private', '0')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "album_config` VALUES ('personal_gallery_limit', '-1')";
@@ -1367,7 +1372,7 @@ if (substr($mode, 0, 6) == 'update')
 		$sql[] = "INSERT INTO `" . $table_prefix . "link_config` VALUES ('pm_notify', '0')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "link_config` VALUES ('lock_submit_site', '0')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "link_config` VALUES ('allow_no_logo', '0')";
-		$sql[] = "INSERT INTO `" . $table_prefix . "link_config` VALUES ('site_logo', 'http://www.icyphoenix.com/images/links/web_logo88a.gif')";
+		$sql[] = "INSERT INTO `" . $table_prefix . "link_config` VALUES ('site_logo', 'http://www.icyphoenix.com/images/icy_phoenix_logo.png')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "link_config` VALUES ('site_url', 'http://www.icyphoenix.com/')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "links` VALUES (1, 'phpBB Official Website', 'Official phpBB Website', 4, 'http://www.phpbb.com/', 'images/links/banner_phpbb88a.gif', 1125353670, 1, 0, 2, '', '')";
 		$sql[] = "INSERT INTO `" . $table_prefix . "links` VALUES (2, 'Icy Phoenix Official Website', 'Icy Phoenix', 4, 'http://www.icyphoenix.com/', 'images/links/banner_ip.gif', 1125353670, 1, 0, 2, '', '')";
@@ -4643,8 +4648,81 @@ if (substr($mode, 0, 6) == 'update')
 		/* Updating from IP 2.0.18.104 */
 		case '2.0.18.104':
 
-		/* Updating from IP 2.0.19.105 */
-		case '2.0.19.105':
+		/* Updating from IP 2.2.0.105 */
+		case '2.2.0.105':
+		$sql[] = "INSERT INTO `" . $table_prefix . "bots` (`bot_name`, `bot_color`, `bot_agent`, `bot_ip`) VALUES ('AhrefsBot', '', 'AhrefsBot/', '')";
+		$sql[] = "UPDATE `" . $table_prefix . "bots` SET bot_agent = 'DotBot/' WHERE bot_name = 'DotBot'";
+		$sql[] = "INSERT INTO `" . $table_prefix . "config` (`config_name`, `config_value`) VALUES ('img_size_max_mp', '1')";
+
+		$sql[] = "DROP TABLE IF EXISTS `___topics_labels___`";
+		$sql[] = "CREATE TABLE `___topics_labels___` (
+					`id` INT(11) NOT NULL auto_increment,
+					`label_name` VARCHAR(255) NOT NULL DEFAULT '',
+					`label_code` VARCHAR(255) NOT NULL DEFAULT '',
+					`label_code_switch` TINYINT(1) DEFAULT '0',
+					`label_bg_color` VARCHAR(255) NOT NULL DEFAULT '',
+					`label_text_color` VARCHAR(255) NOT NULL DEFAULT '',
+					`label_icon` VARCHAR(255) NOT NULL DEFAULT '',
+					`date_format` VARCHAR(25) DEFAULT NULL,
+					`admin_auth` TINYINT(1) DEFAULT '0',
+					`mod_auth` TINYINT(1) DEFAULT '0',
+					`poster_auth` TINYINT(1) DEFAULT '0',
+					PRIMARY KEY `id` (`id`)
+				)";
+
+		$sql[] = "INSERT INTO `___topics_labels___`
+				SELECT tt.id, tt.title_info, tt.title_html, '0', '', '', '', tt.date_format, tt.admin_auth, tt.mod_auth, tt.poster_auth
+				FROM `" . $table_prefix . "title_infos` tt
+				ORDER BY tt.id";
+
+		$sql[] = "DROP TABLE IF EXISTS `_old_topics_labels_`";
+		$sql[] = "RENAME TABLE `" . $table_prefix . "title_infos` TO `_old_topics_labels`";
+		$sql[] = "RENAME TABLE `___topics_labels___` TO `" . $table_prefix . "topics_labels`";
+
+		$sql[] = "UPDATE `" . $table_prefix . "topics_labels` SET `label_code` = `label_name` WHERE `label_code` = ''";
+
+		$sql[] = "ALTER TABLE `" . $table_prefix . "topics` ADD `topic_label_id` MEDIUMINT(8) NOT NULL DEFAULT '0' AFTER `topic_attachment`";
+		/*
+		$sql[] = "ALTER TABLE `" . $table_prefix . "topics` ADD `topic_label_d` INT(11) unsigned NOT NULL DEFAULT '0' AFTER `topic_label_id`";
+		$sql[] = "ALTER TABLE `" . $table_prefix . "topics` ADD `topic_label_u` MEDIUMINT(8) unsigned NOT NULL DEFAULT '0' AFTER `topic_label_d`";
+		*/
+		$sql[] = "ALTER TABLE `" . $table_prefix . "topics` CHANGE `title_compl_infos` `topic_label_compiled` VARCHAR(255) NULL DEFAULT NULL AFTER `topic_label_id`";
+
+		// Now try to update all old labels id... only plain text labels... to avoid problems with BBCodes
+		$sql_tmp = "SELECT * FROM `" . $table_prefix . "topics_labels`";
+		$result_tmp = $db->sql_query($sql_tmp);
+		while ($row_tmp = $db->sql_fetchrow($result_tmp))
+		{
+			$current_label_text = $row_tmp['label_name'];
+			$sql_update = "UPDATE `" . $table_prefix . "topics`
+					SET `topic_label_id` = '" . $db->sql_escape($row_tmp['id']) . "'
+					WHERE `topic_label_compiled` = '" . $db->sql_escape($row_tmp['label_name']) . "'";
+			$db->sql_return_on_error(true);
+			$db->sql_query($sql_update);
+			$db->sql_return_on_error(false);
+		}
+		$db->sql_freeresult($result_tmp);
+
+		/* Updating from IP 2.2.1.106 */
+		case '2.2.1.106':
+
+		/* Updating from IP 2.2.2.107 */
+		case '2.2.2.107':
+		$sql[] = "ALTER TABLE `" . $table_prefix . "users` ADD `user_google_id` VARCHAR(40) NOT NULL DEFAULT '' AFTER `user_facebook_id`";
+
+		/* Updating from IP 2.2.3.108 */
+		case '2.2.3.108':
+
+		/* Updating from IP 2.2.4.109 */
+		case '2.2.4.109':
+			$sql[] = "ALTER TABLE `" . $table_prefix . "plugins` ADD `plugin_class` TINYINT(2) NOT NULL DEFAULT 0 AFTER `plugin_functions`";
+
+		/* Updating from IP 2.2.5.110 */
+		case '2.2.5.110':
+		$sql[] = "ALTER TABLE `" . $table_prefix . "users` ADD `user_privacy_policy_notify` TINYINT(2) NOT NULL DEFAULT 0 AFTER `user_popup_pm`";
+
+		/* Updating from IP 2.2.6.111 */
+		case '2.2.5.110':
 
 	}
 

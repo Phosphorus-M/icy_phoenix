@@ -20,7 +20,7 @@ if (!defined('IN_ICYPHOENIX'))
 	die('Hacking attempt');
 }
 
-define('ICYPHOENIX_VERSION', '2.0.18.104');
+define('ICYPHOENIX_VERSION', '2.2.6.111');
 
 // FOUNDER ID, this is the ID of the main admin of the site, only this user can access special features of the site and this ID is also used to send Welcome and Birthday PM
 define('FOUNDER_ID', '2');
@@ -118,7 +118,8 @@ define('ADM_TPL', COMMON_TPL . 'acp/');
 //define('ADM_TPL', '../../' . ADM . '/templates/');
 define('CMS_TPL', COMMON_TPL . 'cms/');
 define('CMS_TPL_ABS_PATH', IP_ROOT_PATH . 'templates/common/cms/');
-define('BLOCKS_DIR', IP_ROOT_PATH . 'blocks/');
+define('BLOCKS_DIR_NAME', 'blocks/');
+define('BLOCKS_DIR', IP_ROOT_PATH . BLOCKS_DIR_NAME);
 define('BLOCKS_PREFIX', '');
 define('STATS_TPL', 'stats_modules/');
 define('STYLES_PATH', 'cms/styles/');
@@ -492,9 +493,9 @@ define('STATS_CONFIG_TABLE', $table_prefix . 'stats_config');
 define('STATS_MODULES_TABLE', $table_prefix . 'stats_modules');
 define('THEMES_TABLE', $table_prefix . 'themes');
 define('TICKETS_CAT_TABLE', $table_prefix . 'tickets_cat');
-define('TITLE_INFOS_TABLE', $table_prefix . 'title_infos');
 define('TOPIC_VIEW_TABLE', $table_prefix . 'topic_view');
 define('TOPICS_TABLE', $table_prefix . 'topics');
+define('TOPICS_LABELS_TABLE', $table_prefix . 'topics_labels');
 define('TOPICS_TAGS_LIST_TABLE', $table_prefix . 'topics_tags_list');
 define('TOPICS_TAGS_MATCH_TABLE', $table_prefix . 'topics_tags_match');
 define('TOPICS_WATCH_TABLE', $table_prefix . 'topics_watch');

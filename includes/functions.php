@@ -1516,6 +1516,12 @@ function ip_clean_string($text, $charset = false, $extra_chars = false, $is_file
 	// Remove leading / trailing "-"/"_"...
 	$text = preg_replace('!^[-_]|[-_]$!s', '', $text);
 
+	if ($is_filename)
+	{
+		// Remove any trailing dot at the end, to avoid messing up Windows naming system...
+		$text = rtrim($text, '.');
+	}
+
 	return $text;
 }
 
@@ -2390,10 +2396,11 @@ function send_status_line($code, $message)
 */
 function setup_basic_lang()
 {
-	global $cache, $config, $lang;
+	global $cache, $config, $lang, $class_plugins;
 
 	if (empty($lang))
 	{
+		$setup = true;
 		if(!file_exists(IP_ROOT_PATH . 'language/lang_' . $config['default_lang'] . '/lang_main.' . PHP_EXT))
 		{
 			$config['default_lang'] = 'english';
@@ -2445,11 +2452,19 @@ function setup_basic_lang()
 		foreach ($lang_files as $lang_file)
 		{
 			// Do not suppress error if in DEBUG_EXTRA mode
-			$include_result = (defined('DEBUG_EXTRA')) ? (include(IP_ROOT_PATH . 'language/lang_' . $config['default_lang'] . '/' . $lang_file . '.' . PHP_EXT)) : (@include(IP_ROOT_PATH . 'language/lang_' . $config['default_lang'] . '/' . $lang_file . '.' . PHP_EXT));
+			$include_result = (defined('DEBUG_EXTRA') && DEBUG_EXTRA) ? (include(IP_ROOT_PATH . 'language/lang_' . $config['default_lang'] . '/' . $lang_file . '.' . PHP_EXT)) : (@include(IP_ROOT_PATH . 'language/lang_' . $config['default_lang'] . '/' . $lang_file . '.' . PHP_EXT));
 
 			if ($include_result === false)
 			{
 				die('Language file ' . IP_ROOT_PATH . 'language/lang_' . $config['default_lang'] . '/' . $lang_file . '.' . PHP_EXT . ' couldn\'t be opened.');
+			}
+		}
+
+		foreach ($config['plugins'] as $k => $plugin)
+		{
+			if ($plugin['enabled'])
+			{
+				$class_plugins->setup_lang($plugin['dir']);
 			}
 		}
 	}
@@ -5577,7 +5592,7 @@ function page_footer($exit = true, $template_to_parse = 'body', $parse_template 
 			$php_part = 100 - $sql_part;
 
 			// Mighty Gorgon - Extra Debug - BEGIN
-			if (defined('DEBUG_EXTRA') && ($user->data['user_level'] == ADMIN))
+			if (defined('DEBUG_EXTRA') && DEBUG_EXTRA && ($user->data['user_level'] == ADMIN))
 			{
 				if (function_exists('memory_get_usage'))
 				{
@@ -5589,15 +5604,15 @@ function page_footer($exit = true, $template_to_parse = 'body', $parse_template 
 						$memory_usage_text = ' - ' . $lang['Memory_Usage'] . ': ' . $memory_usage;
 					}
 				}
-				if (defined('DEBUG_EXTRA'))
+				if (defined('DEBUG_EXTRA') && DEBUG_EXTRA)
 				{
 					$tmp_query_string = htmlspecialchars(str_replace(array('&explain=1', 'explain=1'), array('', ''), $_SERVER['QUERY_STRING']));
 					$gzip_text .= ' - <a href="' . append_sid(IP_ROOT_PATH . $path_parts['basename'] . (!empty($tmp_query_string) ? ('?' . $tmp_query_string . '&amp;explain=1') : '?explain=1')) . '">Extra ' . $lang['Debug_On'] . '</a>';
 				}
 			}
 
-			//if (defined('DEBUG_EXTRA') && ($user->data['user_level'] == ADMIN))
-			if (defined('DEBUG_EXTRA') && !empty($_REQUEST['explain']) && ($user->data['user_level'] == ADMIN) && method_exists($db, 'sql_report'))
+			//if (defined('DEBUG_EXTRA') && DEBUG_EXTRA && ($user->data['user_level'] == ADMIN))
+			if (defined('DEBUG_EXTRA') && DEBUG_EXTRA && !empty($_REQUEST['explain']) && ($user->data['user_level'] == ADMIN) && method_exists($db, 'sql_report'))
 			{
 				$db->sql_report('display');
 			}

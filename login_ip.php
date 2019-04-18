@@ -45,14 +45,22 @@ if (strstr($redirect_url, "\n") || strstr($redirect_url, "\r") || strstr($redire
 }
 
 $available_networks = array();
-if ($config['enable_social_connect'])
+if (!empty($config['enable_social_connect']))
 {
 	include_once(IP_ROOT_PATH . 'includes/class_social_connect.' . PHP_EXT);
 	$available_networks = SocialConnect::get_available_networks();
 
 	$login_admin = request_get_var('admin', 0);
 
-	$social_network = request_var('social_network', '');
+	if (!empty($_SESSION['login_social_network']))
+	{
+		$social_network = $_SESSION['login_social_network'];
+	}
+	else
+	{
+		$social_network = request_var('social_network', '');
+	}
+
 	$social_network_link = request_var('social_network_link', '');
 	// Logging in via social network
 	if (!empty($social_network) && !empty($available_networks[$social_network]))
@@ -300,7 +308,7 @@ else
 					$forward_page = '';
 					for($i = 1; $i < sizeof($forward_match); $i++)
 					{
-						if(!ereg("sid=", $forward_match[$i]))
+						if(false === strpos($forward_match[$i], "sid="))
 						{
 							if($forward_page != '')
 							{

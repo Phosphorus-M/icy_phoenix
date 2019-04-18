@@ -285,77 +285,13 @@ function send_file_to_browser($real_filename, $mimetype, $physical_filename, $up
 		}
 	}
 
-
-	// Determine the Browser the User is using, because of some nasty incompatibilities.
-	// Most of the methods used in this function are from phpMyAdmin. :)
-
-	$user_agent_pa = (!empty($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : ((!empty($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : '');
-
-	if (ereg('Opera(/| )([0-9].[0-9]{1,2})', $user_agent_pa, $log_version))
-	{
-		$browser_version = $log_version[2];
-		$browser_agent = 'opera';
-	}
-	elseif (ereg('MSIE ([0-9].[0-9]{1,2})', $user_agent_pa, $log_version))
-	{
-		$browser_version = $log_version[1];
-		$browser_agent = 'ie';
-	}
-	elseif (ereg('OmniWeb/([0-9].[0-9]{1,2})', $user_agent_pa, $log_version))
-	{
-		$browser_version = $log_version[1];
-		$browser_agent = 'omniweb';
-	}
-	elseif (ereg('(Konqueror/)(.*)(;)', $user_agent_pa, $log_version))
-	{
-		$browser_version = $log_version[2];
-		$browser_agent = 'konqueror';
-	}
-	elseif (ereg('Mozilla/([0-9].[0-9]{1,2})', $user_agent_pa, $log_version) && ereg('Safari/([0-9]*)', $user_agent_pa, $log_version2))
-	{
-		$browser_version = $log_version[1] . '.' . $log_version2[1];
-		$browser_agent = 'safari';
-	}
-	elseif (ereg('Mozilla/([0-9].[0-9]{1,2})', $user_agent_pa, $log_version))
-	{
-		$browser_version = $log_version[1];
-		$browser_agent = 'mozilla';
-	}
-	else
-	{
-		$browser_version = 0;
-		$browser_agent = 'other';
-	}
-
-	// Correct the Mime Type, if it's an octetstream
-	if (($mimetype == 'application/octet-stream') || ($mimetype == 'application/octetstream'))
-	{
-		if (($browser_agent == 'ie') || ($browser_agent == 'opera'))
-		{
-			$mimetype = 'application/octetstream';
-		}
-		else
-		{
-			$mimetype = 'application/octet-stream';
-		}
-	}
-
+	// Send out the Headers
 	@ob_end_clean();
 	@ini_set('zlib.output_compression', 'Off');
 	header('Pragma: public');
 	header('Content-Transfer-Encoding: none');
-
-	// Send out the Headers
-	if ($browser_agent == 'ie')
-	{
-		header('Content-Type: ' . $mimetype . '; name="' . $real_filename . '"');
-		header('Content-Disposition: inline; filename="' . $real_filename . '"');
-	}
-	else
-	{
-		header('Content-Type: ' . $mimetype . '; name="' . $real_filename . '"');
-		header('Content-Disposition: attachment; filename=' . $real_filename);
-	}
+	header('Content-Type: ' . $mimetype . '; name="' . $real_filename . '"');
+	header('Content-Disposition: inline; filename="' . $real_filename . '"');
 
 	// Now send the File Contents to the Browser
 	if ($gotit)
@@ -376,7 +312,6 @@ function send_file_to_browser($real_filename, $mimetype, $physical_filename, $up
 	{
 		return false;
 	}
-
 
 	@flush();
 	exit();

@@ -47,7 +47,7 @@
 	<th>{L_MESSAGE}</th>
 </tr>
 <!-- BEGIN postrow -->
-<tr>
+<tr data-post-id="{postrow.U_POST_ID}">
 	<td class="row-post-author">
 		<span class="post-name">
 			<a id="p{postrow.U_POST_ID}"></a><!-- IF not postrow.S_THIS_POSTER_MASK --><a href="{postrow.U_USER_ONLINE_STATUS}"><img src="<!-- IF postrow.S_USER_ONLINE -->{postrow.IMG_USER_ONLINE}<!-- ELSEIF postrow.S_USER_HIDDEN -->{postrow.IMG_USER_HIDDEN}<!-- ELSE -->{postrow.IMG_USER_OFFLINE}<!-- ENDIF -->" alt="{postrow.L_POSTER_ONLINE_STATUS}" title="{postrow.L_POSTER_ONLINE_STATUS}" /></a><!-- ENDIF -->&nbsp;{postrow.POSTER_NAME}&nbsp;<!-- IF postrow.S_GENDER_MALE and not postrow.S_THIS_POSTER_MASK --><a href="#"><img src="{postrow.IMG_GENDER_MALE}" alt="{postrow.L_GENDER_MALE}" title="{postrow.L_GENDER_MALE}" /></a><!-- ELSEIF postrow.S_GENDER_FEMALE and not postrow.S_THIS_POSTER_MASK --><a href="#"><img src="{postrow.IMG_GENDER_FEMALE}" alt="{postrow.L_GENDER_FEMALE}" title="{postrow.L_GENDER_FEMALE}" /></a><!-- ENDIF -->
@@ -167,9 +167,9 @@
 	</td>
 </tr>
 <!-- IF S_POSTS_LIKES and not postrow.S_THIS_POSTER_MASK -->
-<tr><td class="row-post-date tdalignc tvalignm" colspan="2"><span class="gensmall"><span id="like_s_p{postrow.U_POST_ID}"><!-- IF postrow.POST_LIKE_TEXT -->{postrow.POST_LIKE_TEXT}&nbsp;&bull;<!-- ENDIF -->&nbsp;</span><!-- IF S_LOGGED_IN and not postrow.S_OWN_POST --><a href="#" id="like_a_p{postrow.U_POST_ID}" style="text-decoration: none;" onclick="post_like_ajax({postrow.U_TOPIC_ID}, {postrow.U_POST_ID}); return false;"><!-- IF postrow.READER_LIKES -->{L_UNLIKE}<!-- ELSE -->{L_LIKE}<!-- ENDIF --></a>&nbsp;&bull;<!-- ENDIF -->&nbsp;{postrow.SINGLE_POST_SHARE}</span></td></tr>
+<tr data-post-id="{postrow.U_POST_ID}"><td class="row-post-date tdalignc tvalignm" colspan="2"><span class="gensmall"><span id="like_s_p{postrow.U_POST_ID}"><!-- IF postrow.POST_LIKE_TEXT -->{postrow.POST_LIKE_TEXT}&nbsp;&bull;<!-- ENDIF -->&nbsp;</span><!-- IF S_LOGGED_IN and not postrow.S_OWN_POST --><a href="#" id="like_a_p{postrow.U_POST_ID}" style="text-decoration: none;" onclick="post_like_ajax({postrow.U_TOPIC_ID}, {postrow.U_POST_ID}); return false;"><!-- IF postrow.READER_LIKES -->{L_UNLIKE}<!-- ELSE -->{L_LIKE}<!-- ENDIF --></a>&nbsp;&bull;<!-- ENDIF -->&nbsp;{postrow.SINGLE_POST_SHARE}</span></td></tr>
 <!-- ENDIF -->
-<tr>
+<tr data-post-id="{postrow.U_POST_ID}">
 	<td class="row-post-date"><div style="text-align: center;"><b>{postrow.SINGLE_POST}</b>&nbsp;&nbsp;<!-- IF S_ADMIN -->{postrow.POST_EDIT_STRING_SHORT}<!-- ELSE -->{postrow.POST_DATE}<!-- ENDIF --></div></td>
 	<td class="row-post-buttons post-buttons">
 		<div style="text-align: right; vertical-align: middle;">
@@ -186,6 +186,9 @@
 				<!-- IF postrow.S_USER_ALBUM -->
 				<a href="{postrow.U_USER_ALBUM}"><img class="{IMG_BUTTON_CLASS_MB}" src="{postrow.IMG_USER_ALBUM}" alt="{postrow.L_S_USER_ALBUM}: {postrow.POSTER_NAME_QQ}" title="{postrow.L_S_USER_ALBUM}: {postrow.POSTER_NAME_QQ}" /></a>&nbsp;
 				<!-- ENDIF -->
+				<!-- IF not postrow.S_THIS_POSTER_MASK -->
+				<!-- IF postrow.IMG_SOCIAL_500PX -->{postrow.IMG_SOCIAL_500PX} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_AIM -->{postrow.IMG_SOCIAL_AIM} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_FACEBOOK -->{postrow.IMG_SOCIAL_FACEBOOK} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_FLICKR -->{postrow.IMG_SOCIAL_FLICKR} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_GITHUB -->{postrow.IMG_SOCIAL_GITHUB} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_GOOGLEPLUS -->{postrow.IMG_SOCIAL_GOOGLEPLUS} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_ICQ -->{postrow.IMG_SOCIAL_ICQ} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_INSTAGRAM -->{postrow.IMG_SOCIAL_INSTAGRAM} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_JABBER -->{postrow.IMG_SOCIAL_JABBER} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_LINKEDIN -->{postrow.IMG_SOCIAL_LINKEDIN} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_MSN -->{postrow.IMG_SOCIAL_MSN} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_PINTEREST -->{postrow.IMG_SOCIAL_PINTEREST} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_SKYPE -->{postrow.IMG_SOCIAL_SKYPE} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_TWITTER -->{postrow.IMG_SOCIAL_TWITTER} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_VIMEO -->{postrow.IMG_SOCIAL_VIMEO} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_YAHOO -->{postrow.IMG_SOCIAL_YAHOO} <!-- ENDIF --><!-- IF postrow.IMG_SOCIAL_YOUTUBE -->{postrow.IMG_SOCIAL_YOUTUBE} <!-- ENDIF -->
+				<!-- ENDIF -->
 			</div>
 			<!-- IF not S_BOT and not postrow.S_THIS_POSTER_MASK -->
 			<!-- BEGIN switch_quick_quote -->
@@ -197,7 +200,7 @@
 		</div>
 	</td>
 </tr>
-<tr><td class="spaceRow" colspan="2"><img src="{SPACER}" width="1" height="3" alt="" /></td></tr>
+<tr data-post-id="{postrow.U_POST_ID}"><td class="spaceRow" colspan="2"><img src="{SPACER}" width="1" height="3" alt="" /></td></tr>
 <!-- IF not S_BOT -->
 <!-- BEGIN switch_viewtopic_banner -->
 <tr>
@@ -332,8 +335,14 @@ if(GetCookie(tmp) == '2')
 		<!-- IF not S_BOT and S_TMOD_BUTTONS -->
 		<!-- INCLUDE viewtopic_admin.tpl -->
 		<!-- ENDIF -->
-		{S_TMOD_TOPIC_PREFIX_SELECT}<br /><br />
+		{S_TMOD_TOPIC_LABELS_BLOCK}<br /><br />
 		{JUMPBOX}
 	</td>
 </tr>
 </table>
+<!-- IF IS_LAST_PAGE -->
+<script type="text/javascript">
+var ajaxPostData = {AJAX_POST_DATA};
+</script>
+<script type="text/javascript" src="templates/common/js/ajax_post.js"></script>
+<!-- ENDIF -->

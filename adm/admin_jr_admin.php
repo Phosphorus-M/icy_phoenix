@@ -82,6 +82,8 @@ foreach($params as $var => $default)
 {
 	$$var = request_var($var, $default);
 }
+// constrain $order value to prevent SQL injection
+$order = ($order == 'ASC') ? 'ASC' : 'DESC';
 
 // Check for edit user
 if (sizeof($_POST))
@@ -91,6 +93,7 @@ if (sizeof($_POST))
 		if (preg_match("/^edit_user_/", $key))
 		{
 			$user_id = str_replace('edit_user_', '', $key);
+			$user_id = (int) intval($user_id);
 		}
 	}
 }

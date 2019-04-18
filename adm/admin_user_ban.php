@@ -93,7 +93,7 @@ if (isset($_POST['submit']))
 
 		for($i = 0; $i < sizeof($email_list_temp); $i++)
 		{
-			// This ereg match is based on one by php@unreelpro.com contained in the annotated php manual at php.com (ereg section)
+			// This preg_match match is based on one by php@unreelpro.com contained in the annotated php manual at php.com (preg_match section) - Originally it was contained @ php.com -> ereg section
 			if (preg_match('/^(([a-z0-9&\'\.\-_\+])|(\*))+@(([a-z0-9\-])|(\*))+\.([a-z0-9\-]+\.)*?[a-z]+$/is', trim($email_list_temp[$i])))
 			{
 				$email_list[] = trim($email_list_temp[$i]);
@@ -344,7 +344,7 @@ else
 		$select_userlist = '<option value="-1">' . $lang['No_banned_users'] . '</option>';
 	}
 
-	$select_userlist = '<select name="unban_user[]" multiple="multiple" size="5">' . $select_userlist . '</select>';
+	$select_userlist = '<select name="unban_user[]" multiple="multiple" size="5" style="min-height: 200px;">' . $select_userlist . '</select>';
 
 	$sql = "SELECT ban_id, ban_ip, ban_email FROM " . BANLIST_TABLE;
 	$result = $db->sql_query($sql);

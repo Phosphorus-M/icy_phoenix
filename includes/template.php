@@ -73,6 +73,7 @@ define('XS_TAG_DEFINE', 9);
 define('XS_TAG_UNDEFINE', 10);
 define('XS_TAG_BEGINELSE', 11);
 define('XS_TAG_ALIAS', 12);
+define('XS_TAG_HOOK', 13);
 
 class Template {
 	var $classname = 'Template';
@@ -585,7 +586,7 @@ class Template {
 		if(!empty($this->files_cache[$handle]) && !empty($config['xs_auto_recompile']))
 		{
 			$cache_time = @filemtime($this->files_cache[$handle]);
-			if(@filemtime(($this->files[$handle]) > $cache_time) || ($config['xs_template_time'] > $cache_time))
+			if((@filemtime($this->files[$handle]) > $cache_time) || ($config['xs_template_time'] > $cache_time))
 			{
 				// file was changed. don't use cache file (will be recompled if configuration allowes it)
 				$this->files_cache[$handle] = '';
@@ -648,7 +649,7 @@ class Template {
 		global $config;
 
 		// Mighty Gorgon - Extra Debug - BEGIN
-		if (defined('DEBUG_EXTRA') && !empty($_REQUEST['explain']))
+		if (defined('DEBUG_EXTRA') && DEBUG_EXTRA && !empty($_REQUEST['explain']))
 		{
 			global $user, $db;
 			if (($user->data['user_level'] == ADMIN) && method_exists($db, 'sql_report'))
@@ -1205,6 +1206,10 @@ class Template {
 					{
 						$keyword_type = XS_TAG_ALIAS;
 					}
+					elseif($keyword === 'HOOK')
+					{
+						$keyword_type = XS_TAG_HOOK;
+					}
 				}
 			}
 			if(!$keyword_type)
@@ -1563,6 +1568,41 @@ class Template {
 				$compiled[] = $line;
 				continue;
 			}
+			/*
+			* <!-- HOOK -->
+			*/
+			if ($keyword_type == XS_TAG_HOOK)
+			{
+				if (empty($class_plugins))
+				{
+					global $class_plugins;
+					if (!class_exists('class_plugins')) include(IP_ROOT_PATH . 'includes/class_plugins.' . PHP_EXT);
+					if (empty($class_plugins)) $class_plugins = new class_plugins();
+				}
+				$params = explode(' ', $params_str);
+				$num_params = sizeof($params);
+				if($num_params != 1)
+				{
+					$compiled[] = $keyword_str;
+					continue;
+				}
+				$line = '<' . '?php ';
+				foreach ($class_plugins->get_hook_files($params_str) as $hook_file)
+				{
+					$filehash = md5($params_str . $this->include_count . time());
+					$line .= ' $this->set_filename(\'xs_include_' . $filehash . '\', \'' . $hook_file . '\', true); ';
+					$line .= ' $this->pparse(\'xs_include_' . $filehash . '\'); ';
+					$this->include_count++;
+				}
+				$line .= ' ?' . '>';
+				$compiled[] = $line;
+				continue;
+			}
+
+
+
+
+
 		}
 
 		// bring it back into a single string.

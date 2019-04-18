@@ -20,13 +20,18 @@ if (!defined('IN_ICYPHOENIX'))
 	exit;
 }
 
+if (!class_exists('DbObjectStorage'))
+{
+	include(IP_ROOT_PATH . 'includes/class_cache.' . PHP_EXT);
+}
+
 class sql_db
 {
 	var $db_connect_id;
 	var $query_string = '';
 	var $query_result;
-	var $row = array();
-	var $rowset = array();
+	var $row;
+	var $rowset;
 	var $num_queries = array();
 	var $open_queries = array();
 	var $transaction = false;
@@ -63,7 +68,7 @@ class sql_db
 	var $one_char;
 
 	// Constructor
-	function sql_db($sqlserver, $sqluser, $sqlpassword, $database, $persistency = true)
+	function sql_db($dbms, $sqlserver, $sqluser, $sqlpassword, $database)
 	{
 		$this->sql_start_time = $this->sql_get_time();
 		$this->sql_init_time = $this->sql_start_time;
@@ -88,18 +93,22 @@ class sql_db
 		$this->server = $sqlserver;
 		$this->dbname = $database;
 
-		$this->db_connect_id = ($this->persistency) ? @mysql_pconnect($this->server, $this->user, $this->password) : @mysql_connect($this->server, $this->user, $this->password);
+		$this->row = new DbObjectStorage();
+		$this->rowset = new DbObjectStorage();
+		$this->open_queries = new DbObjectStorage();
+
+		$this->db_connect_id = @mysqli_connect($this->server, $this->user, $this->password);
 
 		if($this->db_connect_id)
 		{
 			if($database != '')
 			{
 				$this->dbname = $database;
-				$dbselect = @mysql_select_db($this->dbname);
+				$dbselect = @mysqli_select_db($this->db_connect_id, $this->dbname);
 
 				if(!$dbselect)
 				{
-					@mysql_close($this->db_connect_id);
+					@mysqli_close($this->db_connect_id);
 					$this->db_connect_id = $dbselect;
 				}
 			}
@@ -115,8 +124,8 @@ class sql_db
 		// make db connection UTF-8 aware and set the engine to MYISAM
 		if ($this->db_connect_id)
 		{
-			@mysql_query("SET NAMES 'utf8'");
-			@mysql_query("SET storage_engine = MyISAM");
+			@mysqli_query($this->db_connect_id, "SET NAMES 'utf8'");
+			@mysqli_query($this->db_connect_id, "SET default_storage_engine = MyISAM");
 			/*
 			// Mighty Gorgon: other useful MyISAM references
 			//ALTER TABLE table_name ENGINE = MyISAM;
@@ -143,9 +152,9 @@ class sql_db
 
 		if (empty($cache) || ($this->sql_server_version = $cache->get('mysql_version')) === false)
 		{
-			$result = @mysql_query('SELECT VERSION() AS version', $this->db_connect_id);
-			$row = @mysql_fetch_assoc($result);
-			@mysql_free_result($result);
+			$result = @mysqli_query($this->db_connect_id, 'SELECT VERSION() AS version');
+			$row = @mysqli_fetch_assoc($result);
+			@mysqli_free_result($result);
 
 			$this->sql_server_version = $row['version'];
 
@@ -260,7 +269,7 @@ class sql_db
 
 		$cache_folder = (empty($cache_folder) ? SQL_CACHE_FOLDER : $cache_folder);
 
-		if (defined('DEBUG_EXTRA'))
+		if (defined('DEBUG_EXTRA') && DEBUG_EXTRA)
 		{
 			$this->sql_report('start', $query);
 		}
@@ -287,7 +296,7 @@ class sql_db
 
 		if ($this->query_result === false)
 		{
-			if ((($this->query_result = @mysql_query($query, $this->db_connect_id)) === false) && !defined('IN_INSTALL'))
+			if ((($this->query_result = @mysqli_query($this->db_connect_id, $query)) === false) && !defined('IN_INSTALL'))
 			{
 				$this->sql_end_time = $this->sql_get_time();
 				$this->sql_time += $this->sql_end_time - $this->sql_start_time;
@@ -295,7 +304,7 @@ class sql_db
 				$this->sql_error($query);
 			}
 
-			if (defined('DEBUG_EXTRA'))
+			if (defined('DEBUG_EXTRA') && DEBUG_EXTRA)
 			{
 				$this->sql_end_time = $this->sql_get_time();
 				$this->sql_time += $this->sql_end_time - $this->sql_start_time;
@@ -303,7 +312,7 @@ class sql_db
 				$this->sql_report('stop', $query);
 			}
 
-			if ($cache_ttl && method_exists($cache, 'sql_save'))
+			if ($cache_ttl && method_exists($cache, 'sql_save') && $this->query_result)
 			{
 				$this->open_queries[(int) $this->query_result] = $this->query_result;
 				$cache->sql_save($query, $this->query_result, $cache_ttl, $cache_prefix, $cache_folder);
@@ -313,7 +322,7 @@ class sql_db
 				$this->open_queries[(int) $this->query_result] = $this->query_result;
 			}
 		}
-		elseif (defined('DEBUG_EXTRA'))
+		elseif (defined('DEBUG_EXTRA') && DEBUG_EXTRA)
 		{
 			$this->sql_report('fromcache', $query);
 		}
@@ -334,7 +343,7 @@ class sql_db
 			$query_id = $this->query_result;
 		}
 
-		return ($query_id) ? @mysql_num_rows($query_id) : false;
+		return ($query_id) ? @mysqli_num_rows($query_id) : false;
 	}
 
 	/**
@@ -342,7 +351,7 @@ class sql_db
 	*/
 	function sql_affectedrows()
 	{
-		return ($this->db_connect_id) ? @mysql_affected_rows($this->db_connect_id) : false;
+		return ($this->db_connect_id) ? @mysqli_affected_rows($this->db_connect_id) : false;
 	}
 
 	/**
@@ -352,9 +361,14 @@ class sql_db
 	{
 		global $cache;
 
-		if ($query_id === false)
+		if (!$query_id && $this->query_result)
 		{
 			$query_id = $this->query_result;
+		}
+
+		if (!$query_id)
+		{
+			return false;
 		}
 
 		if (isset($cache->sql_rowset[$query_id]))
@@ -362,7 +376,7 @@ class sql_db
 			return $cache->sql_fetchrow($query_id);
 		}
 
-		return ($query_id !== false) ? @mysql_fetch_assoc($query_id) : false;
+		return @mysqli_fetch_assoc($query_id);
 	}
 
 	/**
@@ -433,7 +447,7 @@ class sql_db
 			$query_id = $this->query_result;
 		}
 
-		return ($query_id) ? @mysql_num_fields($query_id) : false;
+		return ($query_id) ? @mysqli_num_fields($query_id) : false;
 	}
 
 	/**
@@ -446,7 +460,7 @@ class sql_db
 			$query_id = $this->query_result;
 		}
 
-		return ($query_id) ? @mysql_field_name($query_id, $offset) : false;
+		return ($query_id) ? @mysqli_field_name($query_id, $offset) : false;
 	}
 
 	/**
@@ -459,7 +473,7 @@ class sql_db
 			$query_id = $this->query_result;
 		}
 
-		return ($query_id) ? @mysql_field_type($query_id, $offset) : false;
+		return ($query_id) ? @mysqli_field_type($query_id, $offset) : false;
 	}
 
 	/**
@@ -480,7 +494,7 @@ class sql_db
 			return $cache->sql_rowseek($rownum, $query_id);
 		}
 
-		return ($query_id !== false) ? @mysql_data_seek($query_id, $rownum) : false;
+		return ($query_id !== false) ? @mysqli_data_seek($query_id, $rownum) : false;
 	}
 
 	/**
@@ -557,7 +571,7 @@ class sql_db
 	*/
 	function sql_nextid()
 	{
-		return ($this->db_connect_id) ? @mysql_insert_id($this->db_connect_id) : false;
+		return ($this->db_connect_id) ? @mysqli_insert_id($this->db_connect_id) : false;
 	}
 
 	/**
@@ -584,12 +598,7 @@ class sql_db
 	*/
 	function sql_escape($msg)
 	{
-		if (!$this->db_connect_id)
-		{
-			return @mysql_real_escape_string($msg);
-		}
-
-		return @mysql_real_escape_string($msg, $this->db_connect_id);
+		return @mysqli_real_escape_string($this->db_connect_id, $msg);
 	}
 
 	/**
@@ -619,6 +628,11 @@ class sql_db
 			case 'SELECT':
 			case 'SELECT_DISTINCT';
 
+				// flatten the SELECT clause
+				if (is_array($array['SELECT']))
+				{
+					$array['SELECT'] = implode(', ', $array['SELECT']);
+				}
 				$sql = str_replace('_', ' ', $query) . ' ' . $array['SELECT'] . ' FROM ';
 
 				// Build table array. We also build an alias array for later checks.
@@ -692,6 +706,10 @@ class sql_db
 
 				if (!empty($array['WHERE']))
 				{
+					if (is_array($array['WHERE']))
+					{
+						$array['WHERE'] = implode(' AND ', $array['WHERE']);
+					}
 					$sql .= ' WHERE ' . $this->_sql_custom_build('WHERE', $array['WHERE']);
 				}
 
@@ -721,9 +739,10 @@ class sql_db
 		$update_sql = '';
 		foreach ($sql_input_array as $k => $v)
 		{
+			$validated_v = $this->sql_validate_value($v);
 			$insert_fields_sql .= (($insert_fields_sql == '') ? '' : ', ') . $k;
-			$insert_values_sql .= (($insert_values_sql == '') ? '' : ', ') . $this->sql_validate_value($v);
-			$update_sql .= (($update_sql == '') ? '' : ', ') . $k . ' = ' . $this->sql_validate_value($v);
+			$insert_values_sql .= (($insert_values_sql == '') ? '' : ', ') . $validated_v;
+			$update_sql .= (($update_sql == '') ? '' : ', ') . $k . ' = ' . $validated_v;
 		}
 
 		$sql_string = $sql_insert ? (' (' . $insert_fields_sql . ') VALUES (' . $insert_values_sql . ')') : $update_sql;
@@ -895,7 +914,7 @@ class sql_db
 	{
 		global $cache;
 
-		if ($query_id === false)
+		if (!$query_id)
 		{
 			$query_id = $this->query_result;
 		}
@@ -905,10 +924,10 @@ class sql_db
 			return $cache->sql_freeresult($query_id);
 		}
 
-		if (isset($this->open_queries[(int) $query_id]))
+		if (isset($this->open_queries[$query_id]))
 		{
-			unset($this->open_queries[(int) $query_id]);
-			return @mysql_free_result($query_id);
+			unset($this->open_queries[$query_id]);
+			return @mysqli_free_result($query_id);
 		}
 
 		return false;
@@ -934,7 +953,7 @@ class sql_db
 			// Show complete SQL error and path to administrators only
 			// Additionally show complete error on installation or if extended debug mode is enabled
 			// The DEBUG_EXTRA constant is for development only!
-			if (defined('IN_INSTALL') || (defined('DEBUG_EXTRA') && (DEBUG_EXTRA == true)))
+			if (defined('IN_INSTALL') || (defined('DEBUG_EXTRA') && DEBUG_EXTRA))
 			{
 				$backtrace = get_backtrace();
 
@@ -1149,7 +1168,7 @@ class sql_db
 				</td>
 				<td nowrap="nowrap" align="center"><div style="text-align: center;">&nbsp;</div></td>
 				<td nowrap="nowrap" width="45%" align="right">
-					<br /><span class="copyright">Design by <a href="http://www.mightygorgon.com" target="_blank">Mighty Gorgon</a>&nbsp;</span><br /><br />
+					<br /><span class="copyright">Design by <a href="http://www.lucalibralato.com/" target="_blank">Luca Libralato</a>&nbsp;</span><br /><br />
 				</td>
 			</tr>
 		</table>
@@ -1325,15 +1344,15 @@ class sql_db
 		switch ($status)
 		{
 			case 'begin':
-				return @mysql_query('BEGIN', $this->db_connect_id);
+				return @mysqli_query('BEGIN', $this->db_connect_id);
 			break;
 
 			case 'commit':
-				return @mysql_query('COMMIT', $this->db_connect_id);
+				return @mysqli_query('COMMIT', $this->db_connect_id);
 			break;
 
 			case 'rollback':
-				return @mysql_query('ROLLBACK', $this->db_connect_id);
+				return @mysqli_query('ROLLBACK', $this->db_connect_id);
 			break;
 		}
 
@@ -1349,14 +1368,14 @@ class sql_db
 		if (!$this->db_connect_id)
 		{
 			return array(
-				'message' => @mysql_error(),
-				'code' => @mysql_errno()
+				'message' => @mysqli_error(),
+				'code' => @mysqli_errno()
 			);
 		}
 
 		return array(
-			'message' => @mysql_error($this->db_connect_id),
-			'code' => @mysql_errno($this->db_connect_id)
+			'message' => @mysqli_error($this->db_connect_id),
+			'code' => @mysqli_errno($this->db_connect_id)
 		);
 	}
 
@@ -1399,17 +1418,17 @@ class sql_db
 					// begin profiling
 					if ($test_prof)
 					{
-						@mysql_query('SET profiling = 1;', $this->db_connect_id);
+						@mysqli_query('SET profiling = 1;', $this->db_connect_id);
 					}
 
-					if ($result = @mysql_query("EXPLAIN $explain_query", $this->db_connect_id))
+					if ($result = @mysqli_query("EXPLAIN $explain_query", $this->db_connect_id))
 					{
-						while ($row = @mysql_fetch_assoc($result))
+						while ($row = @mysqli_fetch_assoc($result))
 						{
 							$html_table = $this->sql_report('add_select_row', $query, $html_table, $row);
 						}
 					}
-					@mysql_free_result($result);
+					@mysqli_free_result($result);
 
 					if ($html_table)
 					{
@@ -1421,10 +1440,10 @@ class sql_db
 						$html_table = false;
 
 						// get the last profile
-						if ($result = @mysql_query('SHOW PROFILE ALL;', $this->db_connect_id))
+						if ($result = @mysqli_query('SHOW PROFILE ALL;', $this->db_connect_id))
 						{
 							$this->html_hold .= '<br />';
-							while ($row = @mysql_fetch_assoc($result))
+							while ($row = @mysqli_fetch_assoc($result))
 							{
 								// make <unknown> HTML safe
 								if (!empty($row['Source_function']))
@@ -1443,14 +1462,14 @@ class sql_db
 								$html_table = $this->sql_report('add_select_row', $query, $html_table, $row);
 							}
 						}
-						@mysql_free_result($result);
+						@mysqli_free_result($result);
 
 						if ($html_table)
 						{
 							$this->html_hold .= '</table>';
 						}
 
-						@mysql_query('SET profiling = 0;', $this->db_connect_id);
+						@mysqli_query('SET profiling = 0;', $this->db_connect_id);
 					}
 				}
 
@@ -1460,12 +1479,12 @@ class sql_db
 				$endtime = explode(' ', microtime());
 				$endtime = $endtime[0] + $endtime[1];
 
-				$result = @mysql_query($query, $this->db_connect_id);
-				while ($void = @mysql_fetch_assoc($result))
+				$result = @mysqli_query($query, $this->db_connect_id);
+				while ($void = @mysqli_fetch_assoc($result))
 				{
 					// Take the time spent on parsing rows into account
 				}
-				@mysql_free_result($result);
+				@mysqli_free_result($result);
 
 				$splittime = explode(' ', microtime());
 				$splittime = $splittime[0] + $splittime[1];
@@ -1482,7 +1501,7 @@ class sql_db
 	*/
 	function _sql_close()
 	{
-		return @mysql_close($this->db_connect_id);
+		return @mysqli_close($this->db_connect_id);
 	}
 
 	/**

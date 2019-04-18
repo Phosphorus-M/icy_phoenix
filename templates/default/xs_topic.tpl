@@ -123,15 +123,16 @@ if($can_reply)
 	// quick reply form
 	ob_start();
 ?>
+<div id="quick_reply_error"></div>
 <div id="quick_reply" style="display: none; position: relative;">
 <a id="quick"></a>
-<form action="<?php echo append_sid(CMS_PAGE_POSTING); ?>" method="post" name="post" style="display: inline;">
+<form action="<?php echo append_sid(CMS_PAGE_POSTING); ?>" method="post" name="post" style="display: inline;" id="quick_reply_form">
 {S_HIDDEN_FIELDS}
 <input type="hidden" name="post_time" value="<?php echo time(); ?>" />
 {IMG_THL}{IMG_THC}<span class="forumlink"><?php echo $lang['Post_a_reply']; ?></span>{IMG_THR}<table class="forumlinenb">
 <tr>
 	<td class="row1 tw200px tdnw"><span class="gen"><b><?php echo $lang['Subject']; ?>:</b></span></td>
-	<td class="row2 tw100pct"><input type="text" name="subject" size="45" maxlength="120" style="width: 98%;" tabindex="2" class="post" value="{L_REPLY_PREFIX}{TOPIC_TITLE_PLAIN}" /></td>
+	<td class="row2 tw100pct"><input type="text" name="subject" size="45" maxlength="120" style="width: 98%;" tabindex="2" class="post" value="{L_REPLY_PREFIX}{TOPIC_TITLE_QR}" /></td>
 </tr>
 <tr>
 	<td class="row1 tw200px tdnw"><span class="gen"><b><?php echo $lang['Message_body']; ?>:<br /><img src="{T_TEMPLATE_PATH}/images/spacer.gif" width="200" height="1" alt="" /></b></span></td>

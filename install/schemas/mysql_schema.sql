@@ -1,4 +1,4 @@
-SET storage_engine=MYISAM;
+SET default_storage_engine = MYISAM;
 
 ## `phpbb_acronyms`
 
@@ -1112,6 +1112,7 @@ CREATE TABLE `phpbb_plugins` (
 	`plugin_constants` TINYINT(2) NOT NULL DEFAULT 0,
 	`plugin_common` TINYINT(2) NOT NULL DEFAULT 0,
 	`plugin_functions` TINYINT(2) NOT NULL DEFAULT 0,
+	`plugin_class` TINYINT(2) NOT NULL DEFAULT 0,
 	PRIMARY KEY (`plugin_name`)
 );
 
@@ -1596,24 +1597,6 @@ CREATE TABLE `phpbb_themes` (
 
 ## --------------------------------------------------------
 
-## `phpbb_title_infos`
-
-CREATE TABLE `phpbb_title_infos` (
-	`id` INT(11) NOT NULL auto_increment,
-	`title_info` VARCHAR(255) NOT NULL DEFAULT '',
-	`title_html` VARCHAR(255) NOT NULL DEFAULT '',
-	`date_format` VARCHAR(25) DEFAULT NULL,
-	`admin_auth` TINYINT(1) DEFAULT '0',
-	`mod_auth` TINYINT(1) DEFAULT '0',
-	`poster_auth` TINYINT(1) DEFAULT '0',
-	UNIQUE KEY `id` (`id`)
-);
-
-## `phpbb_title_infos`
-
-
-## --------------------------------------------------------
-
 ## `phpbb_topic_view`
 
 CREATE TABLE `phpbb_topic_view` (
@@ -1664,7 +1647,8 @@ CREATE TABLE `phpbb_topics` (
 	`topic_last_poster_color` VARCHAR(16) NOT NULL DEFAULT '',
 	`topic_moved_id` MEDIUMINT(8) unsigned NOT NULL DEFAULT '0',
 	`topic_attachment` TINYINT(1) NOT NULL DEFAULT '0',
-	`title_compl_infos` VARCHAR(255) DEFAULT NULL,
+	`topic_label_id` MEDIUMINT(8) NOT NULL DEFAULT '0',
+	`topic_label_compiled` VARCHAR(255) DEFAULT NULL,
 	`news_id` INT(10) unsigned NOT NULL DEFAULT '0',
 	`topic_calendar_time` INT(11) DEFAULT NULL,
 	`topic_calendar_duration` INT(11) DEFAULT NULL,
@@ -1684,6 +1668,28 @@ ALTER TABLE `phpbb_topics` ADD FULLTEXT (topic_title);
 
 
 ## `phpbb_topics`
+
+
+## --------------------------------------------------------
+
+## `phpbb_topics_labels`
+
+CREATE TABLE `phpbb_topics_labels` (
+	`id` INT(11) NOT NULL auto_increment,
+	`label_name` VARCHAR(255) NOT NULL DEFAULT '',
+	`label_code` VARCHAR(255) NOT NULL DEFAULT '',
+	`label_code_switch` TINYINT(1) DEFAULT '0',
+	`label_bg_color` VARCHAR(255) NOT NULL DEFAULT '',
+	`label_text_color` VARCHAR(255) NOT NULL DEFAULT '',
+	`label_icon` VARCHAR(255) NOT NULL DEFAULT '',
+	`date_format` VARCHAR(25) DEFAULT NULL,
+	`admin_auth` TINYINT(1) DEFAULT '0',
+	`mod_auth` TINYINT(1) DEFAULT '0',
+	`poster_auth` TINYINT(1) DEFAULT '0',
+	PRIMARY KEY `id` (`id`)
+);
+
+## `phpbb_topics_labels`
 
 
 ## --------------------------------------------------------
@@ -1820,6 +1826,7 @@ CREATE TABLE `phpbb_users` (
 	`user_email` VARCHAR(255) DEFAULT NULL,
 	`user_email_hash` BIGINT(20) DEFAULT '0' NOT NULL,
 	`user_facebook_id` VARCHAR(40) NOT NULL DEFAULT '',
+	`user_google_id` VARCHAR(40) NOT NULL DEFAULT '',
 	`user_website` VARCHAR(255) DEFAULT NULL,
 	`user_ip` VARCHAR(40) DEFAULT '' NOT NULL,
 	`user_first_name` VARCHAR(255) NOT NULL DEFAULT '',
@@ -1862,6 +1869,7 @@ CREATE TABLE `phpbb_users` (
 	`user_notify` TINYINT(1) NOT NULL DEFAULT '1',
 	`user_notify_pm` TINYINT(1) NOT NULL DEFAULT '0',
 	`user_popup_pm` TINYINT(1) NOT NULL DEFAULT '0',
+	`user_privacy_policy_notify` TINYINT(1) NOT NULL DEFAULT '0',
 	`user_rank` INT(11) DEFAULT '0',
 	`user_rank2` INT(11) DEFAULT '-1',
 	`user_rank3` INT(11) DEFAULT '-2',

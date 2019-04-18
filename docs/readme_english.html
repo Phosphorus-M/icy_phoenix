@@ -49,9 +49,10 @@
 					<li><a href="#license">License</a></li>
 					<li><a href="#requirements">Requirements</a></li>
 					<li><a href="#fresh_installation">Fresh Installation</a></li>
-					<li><a href="#upgrade_ip">Upgrade from IP 1.3.0.53 or above</a></li>
-					<li><a href="#upgrade_ip_027">Upgrade from IP 1.2.0.27</a></li>
-					<li><a href="#upgrade_ip_015">Upgrade from IP 1.1.0.15</a></li>
+					<li><a href="#upgrade_ip">Upgrade from Icy Phoenix 2.0.0.86 or above</a></li>
+					<li><a href="#upgrade_ip_053">Upgrade from Icy Phoenix 1.3.0.53</a></li>
+					<li><a href="#upgrade_ip_027">Upgrade from Icy Phoenix 1.2.0.27</a></li>
+					<li><a href="#upgrade_ip_015">Upgrade from Icy Phoenix 1.1.0.15</a></li>
 					<li><a href="#upgrade_xs">Upgrade from phpBB XS</a></li>
 					<li><a href="#convert_phpbb3">Convert from phpBB 3.0.x</a></li>
 					<li><a href="#upgrade_phpbb">Upgrade from phpBB 2.0.x</a></li>
@@ -71,7 +72,7 @@
 				<div class="post-text">
 					<ul>
 						<li><span class="text_green"><b>What is Icy Phoenix?</b></span><br /></li>
-						<li><a class="post-url" href="http://www.icyphoenix.com/" target="_blank">Icy Phoenix</a> is a CMS based on phpBB (a fully scalable and highly customisable open-source Bulletin Board package PHP based) plus many modifications and code integrations which add flexibility to the whole package. The official home page for phpBB is <a class="post-url" href="http://www.phpbb.com/" target="_blank">www.phpbb.com</a>. Icy Phoenix has some features originally developed for <abbr title="phpBB eXpertS - Icy Phoenix Ancestor">phpBB XS</abbr> Project which has been founded by Bicet and then developed by both Bicet and Mighty Gorgon. Icy Phoenix has been created by <a class="post-url" href="http://www.mightygorgon.com/" target="_blank">Mighty Gorgon</a> after he left the <abbr title="phpBB eXpertS - Icy Phoenix Ancestor">phpBB XS</abbr> Project.<br /><br /></li>
+						<li><a class="post-url" href="http://www.icyphoenix.com/" target="_blank">Icy Phoenix</a> is a CMS based on phpBB (a fully scalable and highly customisable open-source Bulletin Board package PHP based) plus many modifications and code integrations which add flexibility to the whole package. The official home page for phpBB is <a class="post-url" href="http://www.phpbb.com/" target="_blank">www.phpbb.com</a>. Icy Phoenix has some features originally developed for <abbr title="phpBB eXpertS - Icy Phoenix Ancestor">phpBB XS</abbr> Project which has been founded by Bicet and then developed by both Bicet and Mighty Gorgon. Icy Phoenix has been created by <a class="post-url" href="http://www.lucalibralato.com/" target="_blank">Luca Libralato</a> after he left the <abbr title="phpBB eXpertS - Icy Phoenix Ancestor">phpBB XS</abbr> Project.<br /><br /></li>
 						<li><span class="text_green"><b>What are the main features of Icy Phoenix?</b></span><br /></li>
 						<li>
 							Icy Phoenix has many features, most of them are listed in the <a class="post-url" href="http://www.icyphoenix.com/features.php" target="_blank">Features Page</a> and in the <a class="post-url" href="http://www.icyphoenix.com/credits.php">Credits Page</a>. The main ones are:<br />
@@ -217,13 +218,64 @@
 		</table>
 
 		<table class="forumline">
-		<tr><td class="row-header" colspan="3"><span><a name="upgrade_ip">Upgrade from Icy Phoenix 1.3.0.53 or above</a></span></td>
+		<tr><td class="row-header" colspan="3"><span><a name="upgrade_ip">Upgrade from Icy Phoenix 2.0.0.86 or above</a></span></td>
 		</tr>
 		<tr>
 			<td class="row-post" colspan="3">
 				<div class="post-text">
 					<br />
-					If you're using Icy Phoenix 1.3.0.53 or above, you can upgrade your board by following these instructions:<br />
+					If you're using Icy Phoenix 2.0.0.86 or above, you can upgrade your board by following these instructions:<br />
+					<ol type="1">
+						<li>Login as administrator.</li>
+						<li>Lock your site.</li>
+						<li><span class="text_red">Make a full backup of all files and database</span> (if you don't do a backup, don't dare to ask for support! <img src="../images/smiles/icon_mrgreen.gif" alt="Backup Rules!" title="Backup Rules!" />)</li>
+						<li>Did you backup everything? If you didn't make the backup, please, step back to the previous point.</li>
+						<li>Copy your current <b>.htaccess</b> (if you edited it) and <b>config.php</b> and keep them in a safe place.</li>
+						<li>You may also want to backup the customized pages you have created using the CMS (if you have created some).</li>
+						<li>Check again that your backup is ok and keep it in a safe place. <img src="../images/smiles/icon_mrgreen.gif" alt="Backup Rules!" title="Backup Rules!" /></li>
+						<li>Remove the following folders (make sure you don't have in those folders some files you may need for some mods you have installed, but in any case you should have a backup <img src="../images/smiles/icon_mrgreen.gif" alt="Backup Rules!" title="Backup Rules!" />):
+							<ul>
+								<li><b>adm</b></li>
+								<li><b>includes</b></li>
+								<li><b>language</b></li>
+								<li><b>templates</b></li>
+							</ul>
+						</li>
+						<li>Remove <b>all old Icy Phoenix files</b> making sure you are not deleting other stuff you may need! (In any case you should have a backup, right? <img src="../images/smiles/icon_mrgreen.gif" alt="Backup Rules!" title="Backup Rules!" />).</li>
+						<li>When deleting files, please pay particular attention to custom files and folders like these:<br />
+							<ul>
+								<li><b>config.php</b></li>
+								<li><b>backup/</b></li>
+								<li><b>downloads/</b></li>
+								<li><b>images/</b></li>
+								<li><b>files/</b></li>
+								<li><b>logs/</b></li>
+							</ul>
+						</li>
+						<li>Unpack Icy Phoenix package to one folder on your HD.</li>
+						<li>Upload all Icy Phoenix files (all but <b>config.php</b>) in the same folder where Icy Phoenix was installed and running. Pay attention that all older files still there (if any) must be replaced by the new ones.</li>
+						<li>Apply all permissions listed in <a class="post-url" href="#fresh_installation">Fresh Installation</a>.</li>
+						<li>Run <b>install/database_update.php</b> to update your DB (i.e. <i><u>http://www.mysite.com/ip/install/database_update.php</u></i>).</li>
+						<li>Delete or rename <b>install</b> folder.</li>
+						<li>Customize your Icy Phoenix setup as listed here ==&gt; <a class="post-url" href="#ip_customize">Customizations</a>.</li>
+						<li>Unlock your site.</li>
+						<li>Enjoy your New <b>Icy Phoenix</b> Site <img src="../images/smiles/icon_mrgreen.gif" alt="Enjoy!" title="Enjoy!" />.</li>
+					</ol>
+					<br />
+				</div>
+			</td>
+		</tr>
+		<tr><td class="cat" colspan="3"><span style="float: right;">&nbsp;&nbsp;<a href="#top" class="gensmall">Top</a>&nbsp;&nbsp;</span></td></tr>
+		</table>
+
+		<table class="forumline">
+		<tr><td class="row-header" colspan="3"><span><a name="upgrade_ip_053">Upgrade from Icy Phoenix 1.3.0.53</a></span></td>
+		</tr>
+		<tr>
+			<td class="row-post" colspan="3">
+				<div class="post-text">
+					<br />
+					If you're using Icy Phoenix 1.3.0.53, you can upgrade your board by following these instructions:<br />
 					<ol type="1">
 						<li>Login as administrator.</li>
 						<li>Lock your site.</li>
@@ -319,7 +371,7 @@
 								<li><b>album_mod/upload/</b> ==&gt; <b>files/album/</b></li>
 								<li><b>pafiledb/uploads/</b> ==&gt; <b>downloads/</b></li>
 							</ul>
-						<li>At this stage, please follow the instructions listed here <a class="post-url" href="#upgrade_ip">Upgrade from Icy Phoenix 1.3.0.53 or above</a>.</li>
+						<li>At this stage, please follow the instructions listed here <a class="post-url" href="#upgrade_ip">Upgrade from Icy Phoenix 2.0.0.86 or above</a>.</li>
 						<li>Run <b>install/install.php</b> again since you may need to run most of the maintenance features listed in that page (i.e. <i><u>http://www.mysite.com/ip/install/install.php</u></i>).</li>
 						<li>Unlock your site.</li>
 						<li>Enjoy your New <b>Icy Phoenix</b> Site <img src="../images/smiles/icon_mrgreen.gif" alt="Enjoy!" title="Enjoy!" />.</li>
@@ -368,7 +420,7 @@
 					<ol type="1">
 						<li>Login as administrator.</li>
 						<li>Lock your board.</li>
-						<li>At this stage, please follow the instructions listed here <a class="post-url" href="#upgrade_ip">Upgrade from Icy Phoenix 1.3.0.53 or above</a>.</li>
+						<li>At this stage, please follow the instructions listed here <a class="post-url" href="#upgrade_ip">Upgrade from Icy Phoenix 2.0.0.86 or above</a>.</li>
 						<li>Run <b>install/install.php</b> again since you may need to run most of the maintenance features listed in that page (i.e. <i><u>http://www.mysite.com/ip/install/install.php</u></i>).</li>
 						<li>Unlock your site.</li>
 						<li>Enjoy your New <b>Icy Phoenix</b> Site <img src="../images/smiles/icon_mrgreen.gif" alt="Enjoy!" title="Enjoy!" />.</li>
@@ -399,20 +451,24 @@
 			<td class="row-post" colspan="3">
 				<br />
 				<div class="post-text">
-					<i>Version 1.1.0.15 (2007/05/20)</i>
-					<ul><li>First stable release.</li></ul>
+					<i>Version 2.2.0.105 (2016/06/04)</i>
+					<ul><li>Fifth stable release.</li></ul>
 					<br />
 					<br />
-					<i>Version 1.2.0.27 (2008/03/03)</i>
-					<ul><li>Second stable release.</li></ul>
+					<i>Version 2.0.0.86 (2012/07/28)</i>
+					<ul><li>Fourth stable release.</li></ul>
 					<br />
 					<br />
 					<i>Version 1.3.0.53 (2009/07/17)</i>
 					<ul><li>Third stable release.</li></ul>
 					<br />
 					<br />
-					<i>Version 2.0.0.86 (2012/07/28)</i>
-					<ul><li>Icy Phoenix 2.0 First stable release.</li></ul>
+					<i>Version 1.2.0.27 (2008/03/03)</i>
+					<ul><li>Second stable release.</li></ul>
+					<br />
+					<br />
+					<i>Version 1.1.0.15 (2007/05/20)</i>
+					<ul><li>First stable release.</li></ul>
 				</div>
 				<br clear="all" /><br />
 			</td>
@@ -434,7 +490,7 @@
 				</td>
 				<td nowrap="nowrap" align="center"><div style="text-align: center;">&nbsp;</div></td>
 				<td nowrap="nowrap" width="45%" align="right">
-					<br /><span class="copyright">Design by <a href="http://www.mightygorgon.com" target="_blank">Mighty Gorgon</a>&nbsp;</span><br /><br />
+					<br /><span class="copyright">Design by <a href="http://www.lucalibralato.com/" target="_blank">Luca Libralato</a>&nbsp;</span><br /><br />
 				</td>
 			</tr>
 		</table>

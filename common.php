@@ -23,21 +23,22 @@ if (!defined('IN_ICYPHOENIX'))
 $starttime = explode(' ', microtime());
 $starttime = $starttime[1] + $starttime[0];
 
-error_reporting(E_ALL ^ E_NOTICE); // Report all errors, except notices
-
 //@ini_set('memory_limit', '24M');
 
 // MIGHTY GORGON - DEBUG - BEGIN
-@define('DEBUG', true); // Debugging ON/OFF => TRUE/FALSE
-@define('DEBUG_EXTRA', true); // Extra Debugging ON/OFF => TRUE/FALSE
+@define('DEBUG', false); // Debugging ON/OFF => TRUE/FALSE
+@define('DEBUG_EXTRA', false); // Extra Debugging ON/OFF => TRUE/FALSE
+$error_reporting = E_ALL ^ E_NOTICE; // Report all errors, except notices
 if (defined('DEBUG_EXTRA') && DEBUG_EXTRA)
 {
+	$error_reporting = E_ALL; // Report all errors
 	$base_memory_usage = 0;
 	if (function_exists('memory_get_usage'))
 	{
 		$base_memory_usage = @memory_get_usage();
 	}
 }
+error_reporting($error_reporting);
 // MIGHTY GORGON - DEBUG - END
 
 /*
@@ -253,19 +254,33 @@ if (!defined('SKIP_CMS_CONFIG') && !defined('IN_ADMIN') && !defined('IN_CMS'))
 
 // Plugins - BEGIN
 $config['plugins'] = array();
+if (!class_exists('class_plugins')) include(IP_ROOT_PATH . 'includes/class_plugins.' . PHP_EXT);
+if (empty($class_plugins)) $class_plugins = new class_plugins();
 foreach ($cache->obtain_plugins_config() as $k => $plugin)
 {
+	// don't load disabled plugins
+	if (empty($plugin['plugin_enabled']))
+	{
+		continue;
+	}
 	$config['plugins'][$k]['enabled'] = !empty($plugin['plugin_enabled']) ? true : false;
 	$config['plugins'][$k]['dir'] = !empty($plugin['plugin_dir']) ? ($plugin['plugin_dir'] . '/') : '';
 	// Plugins autoload - BEGIN
-	$plugin_includes_array = array('constants', 'common', 'functions');
-	foreach ($plugin_includes_array as $plugin_include)
+	$plugin_dir = IP_ROOT_PATH . PLUGINS_PATH . $config['plugins'][$k]['dir'];
+	foreach ($class_plugins->plugin_includes_array as $plugin_include)
 	{
 		$config['plugins'][$k][$plugin_include] = !empty($plugin['plugin_' . $plugin_include]) ? true : false;
 		if (!empty($config['plugins'][$k][$plugin_include]))
 		{
-			@include_once(IP_ROOT_PATH . PLUGINS_PATH . $config['plugins'][$k]['dir'] . $plugin_include . '.' . PHP_EXT);
+			@include_once($plugin_dir . $plugin_include . '.' . PHP_EXT);
 		}
+	}
+
+	// if the plugin has a class (events, etc), register it.
+	$plugin_class_name = 'class_plugin_' . $k;
+	if (class_exists($plugin_class_name))
+	{
+		$class_plugins->register($k, new $plugin_class_name());
 	}
 	// Plugins autoload - END
 }

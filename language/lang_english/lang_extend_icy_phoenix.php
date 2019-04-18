@@ -65,8 +65,8 @@ if ($lang_extend_admin)
 		'IP_cookie_law_explain' => 'By enabling this feature a banner will be shown to guests on site landing to comply with EU cookie law',
 
 // TAB - SITE
-		'IP_mobile_style_disable' => 'Disable Mobile Devices Dectection',
-		'IP_mobile_style_disable_explain' => 'Usually when a mobile device connect to the site, the <b>Mobile</b> style is automatically enabled (it could be manually switched off by each user). If you want to disable this automatic detection, just select this option.',
+		'IP_mobile_style_disable' => 'Disable Mobile Devices Detection',
+		'IP_mobile_style_disable_explain' => 'Usually when a mobile device connects to the site, the <b>Mobile</b> style is automatically enabled (it could be manually switched off by each user). If you want to disable this automatic detection, just select this option.',
 
 // TAB - Icy Phoenix
 		'IP_enable_xs_version_check' => 'Enable Icy Phoenix Version Check',
@@ -240,9 +240,15 @@ if ($lang_extend_admin)
 		'Facebook_Login_Settings' => 'Facebook Login Settings',
 		'Facebook_Login_Settings_explain' => 'Please follow the instructions to get your App ID and App Secret:<br />- Visit the <a href="https://developers.facebook.com/" target="_blank">Facebook Developers website</a>.<br />- Login with your Facebook account.<br />- Create a new application.<br />- Disable "Sandbox Mode".<br />- Include your App Domain, with no http/https nor www (ie icyphoenix.com).<br />- Enable the option "Website with Facebook Login", and insert your website url, with http/https AND www (ie http://www.icyphoenix.com).<br />- Save the changes.<br />- Write your App ID and App Secret below.',
 		'Enable_Facebook_Login' => 'Enable Facebook Login',
-		'Enable_Facebook_Login_explain' => 'Allow users login and register using their Facebook account. Remember adding your app tokens below.',
+		'Enable_Facebook_Login_explain' => 'Allow users to login and register using their Facebook account. Remember adding your app tokens below.',
 		'Facebook_App_ID' => 'App ID',
 		'Facebook_App_Secret' => 'App Secret',
+		'Google_Login_Settings' => 'Google Login Settings',
+		'Google_Login_Settings_explain' => 'Please follow the instructions to get your App ID and App Secret:<br />- Visit the <a href="https://console.developers.google.com/project?pli=1" target="_blank">Google Developers Console website</a>.<br />- Login with your Google account.<br />- Create a new project.<br />- Click on "Enable and Use Google APIs"<br />- Click "Credentials"<br />- Click on "OAuth consent screen"<br />- Fill the fields (Homepage URL, with http://, i.e. <i>http://icyphoenix.com</i>, and Product Name)<br />- Save<br />- Click "New credentials"<br />- Select "Oauth client ID"<br />- Check "Web application"<br />- Fill in the fields (name, "Authorized JavaScript origins" should be your domain, like <i>icyphoenix.com</i> or <i>web.example.com</i>). In "redirect URIs", add your domain, prefixed with <i>http(s)://</i>, with <i>/login_ip.php</i> at the end, i.e. <i>http://example.com/my/directory/login_ip.php</i><br />- Save the changes.<br />- Write your Client ID and Client Secret below.',
+		'Enable_Google_Login' => 'Enable Google Login',
+		'Enable_Google_Login_explain' => 'Allow users to login and register using their Google account. Remember adding your app tokens below.',
+		'Google_App_ID' => 'Client ID',
+		'Google_App_Secret' => 'Client Secret',
 
 // TAB - Posting
 		'IP_posts_precompiled' => 'Disable Precompiled Posts For Guests',
@@ -363,11 +369,20 @@ if ($lang_extend_admin)
 		'IP_thumbnail_s_size' => 'Images List Thumbnails Size (in pixels, default = 120)',
 		'IP_thumbnail_s_size_explain' => 'Size for pictures in images lists pages',
 
+		'IP_img_size_max_mp' => 'Max Image Upload Size',
+		'IP_img_size_max_mp_explain' => 'Select the maximum allowed upload size for images (in megabytes, default = 1): make sure your server settings will allow such a size to be uploaded',
+		'MB_1' => '1MB',
+		'MB_2' => '2MB',
+		'MB_3' => '3MB',
+		'MB_5' => '5MB',
+		'MB_7' => '7MB',
+
 		'IP_img_list_cols' => 'Images List Columns (default = 4)',
 		'IP_img_list_cols_explain' => 'Number of columns in Images List page',
 
 		'IP_img_list_rows' => 'Images List Rows (default = 5)',
-		'IP_img_list_cols_explain' => 'Number of rows in Images List page',
+		'IP_img_list_rows_explain' => 'Number of rows in Images List page',
+
 
 // TAB - Forum
 		'Lang_extend_categories_hierarchy' => 'Categories Hierarchy',
@@ -637,6 +652,10 @@ $lang = array_merge($lang, array(
 // lang_extend_topic_calendar.php - END
 
 	'DB_LOG_ALL' => 'Yes with error reports',
+
+// AJAX Refresh
+	'IP_auto_refresh_viewtopic_interval' => 'AJAX :: Viewtopic refresh interval',
+	'IP_auto_refresh_viewtopic_interval_explain' => 'Define how often, in milliseconds, should the topic view page refresh itself for new posts. Use 0 to disable the feature. Recommended: 5000 ms, so 5 seconds. Cannot be lower than 300 ms (overloads server).',
 	)
 );
 

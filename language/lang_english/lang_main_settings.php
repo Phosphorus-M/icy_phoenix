@@ -57,8 +57,10 @@ $lang['OwnerCompany'] = 'Icy Phoenix';
 $lang['OwnerDetails'] = 'Icy Phoenix';
 $lang['OwnerAdrress'] = 'Italy';
 $lang['OwnerServer'] = 'Icy Phoenix';
+$lang['OwnerDataOwner'] = 'Mighty Gorgon';
+$lang['OwnerDataOwnerAddress'] = 'Italy';
 
-$lang['PrivacyDisclaimer'] = 'You specifically agree that your personal data will be treated in respect to current law in the country of the site owner.<br />';
+$lang['PrivacyDisclaimer'] = 'You specifically agree that your personal data will be treated in respect to current law provisions in the country of the site owner.<br />';
 
 $lang['ENCODING'] = 'UTF-8';
 $lang['DIRECTION'] = 'ltr';

@@ -851,25 +851,44 @@ $lang = array_merge($lang, array(
 	'Bin_forum_explain' => 'Use the forum ID to where topics will be trashed; a value of 0 will disable this feature. You should edit this forum permissions to allow or not allow access/view/post or reply for users.',
 // End add - Bin Mod
 
+// Mighty Gorgon - Topics Labels - BEGIN
 // Begin Quick Title Edition Mod 1.0.0 by Xavier Olive.
-	'Title_infos' => 'Quick Title Edition Management',
-	'Must_select_title' => 'You must select a quick title add-on',
-	'Title_updated' => 'Quick Title Add-on updated',
-	'Title_added' => 'Quick Title Add-on added',
-	'Click_return_titleadmin' => 'Click %sHere%s to return to Quick Title Management',
-	'Title_removed' => 'Quick Title Add-on removed',
-	'Quick_title_explain' => 'You can create short bits of text which you will be able to add to the title of a topic, by pushing a single button.<br />If you want the name of the person who performed the action of modifying the title to be shown, just put %mod% where you want it to be placed. For instance, [Link OK | checked by %mod%] will be displayed as [Link OK |checked by ModeratorName]. You can insert the date in the same way by placing %date% wherever you want it to appear.',
-	'Title_head' => 'Quick Title Addon',
-	'Title_info' => 'Quick Title',
-	'Title_html' => 'BBCode or HTML Code',
-	'Title_html_explain' => 'If you leave this field empty, then only the Quick Title text will be added',
-	'Title_auth' => 'Permissions',
-	'Administrator' => 'Administrator',
-	'Topic_poster' => 'Topic poster',
-	'Add_new_title_info' => 'Add a Quick Title Add-on',
-	'Title_perm_info' => 'Permissions',
-	'Title_perm_info_explain' => 'Users with these levels will be able to use this Quick Title Add-on',
+	'TOPICS_LABELS' => 'Topics Labels Management',
+	'TOPICS_LABELS_EXPLAIN' => 'You can create short bits of text which you will be able to add to the title of a topic, by pushing a single button.<br />If you want the name of the person who performed the action of modifying the title to be shown, just put <strong>%mod%</strong> where you want it to be placed. For instance, [Link OK | checked by <strong>%mod%</strong>] will be displayed as [Link OK |checked by ModeratorName]. You can insert the date in the same way by placing <strong>%date%</strong> wherever you want it to appear.',
+	'MUST_SELECT_LABEL' => 'You must select a Topic Label',
+	'LABEL_UPDATED' => 'Topic Label updated',
+	'LABEL_ADDED' => 'Topic Label added',
+	'CLICK_RETURN_TOPICS_LABELS' => 'Click %sHere%s to return to Topics Labels Management',
+	'LABEL_REMOVED' => 'Topic Label removed',
+	'TOPICS_LABELS_HEAD' => 'Topics Labels',
+	'LABEL_INFO' => 'Topics Labels',
+	'LABEL_EXAMPLE' => 'Label Example',
+	'LABEL_EXAMPLE_EXPLAIN' => 'This is just a demo of how the label will look like... please note that for the sake of the example the code is not processed, it will just be shown as text!',
+	'LABEL_NAME' => 'Label Name',
+	'LABEL_NAME_EXPLAIN' => 'Just the name of your label',
+	'LABEL_CODE' => 'Label Code',
+	'LABEL_CODE_EXPLAIN' => 'Code for the label, if you want this code to be processed as BBCode/HTML, please enable the switch below',
+	'LABEL_CODE_SWITCH' => 'Label Type',
+	'LABEL_CODE_SWITCH_EXPLAIN' => 'Select if you want the label to be displayed in Plain Text or processed by using BBCode/HTML',
+	'LABEL_CODE_SWITCH_PT' => 'Plain Text',
+	'LABEL_CODE_SWITCH_BBC' => 'BBCode',
+	'LABEL_CODE_SWITCH_HTML' => 'HTML',
+	'LABEL_CODE_SWITCH_BBC_HTML' => 'BBCode + HTML',
+	'LABEL_PERMISSION' => 'Permissions',
+	'LABEL_AUTH_ADMIN' => 'Administrator',
+	'LABEL_AUTH_MOD' => 'Moderator',
+	'LABEL_AUTH_TOPIC_POSTER' => 'Topic poster',
+	'ADD_NEW_TOPIC_LABEL' => 'Add a Topic Label',
+	'LABEL_AUTH_INFO' => 'Permissions',
+	'LABEL_AUTH_INFO_EXPLAIN' => 'Users with these levels will be able to use this Topics Labels',
+	'LABEL_BG_COLOR' => 'Label Background Color',
+	'LABEL_BG_COLOR_EXPLAIN' => 'Select the background color for the label (hex format: #ff0000)',
+	'LABEL_TEXT_COLOR' => 'Label Text Color',
+	'LABEL_TEXT_COLOR_EXPLAIN' => 'Select the color for the text within the label (hex format: #000000)',
+	'LABEL_ICON' => 'Label Icon (Font Awesome Class Name)',
+	'LABEL_ICON_EXPLAIN' => 'Insert the name of the Font Awesome Icon: <a href="http://fontawesome.io/icons/">Font Awesome reference table</a> | <a href="http://fontawesome.io/cheatsheet/">Cheatsheet</a>',
 // End Quick Title Edition Mod 1.0.0 by Xavier Olive.
+// Mighty Gorgon - Topics Labels - END
 
 // Limit Image Width MOD
 	'Available' => 'Available',
@@ -2063,6 +2082,40 @@ $lang = array_merge($lang, array(
 	'FORUMS_SUBMIT_CFG' => 'Update Settings',
 	'FORUMS_SELECTION_MULTIPLE' => 'You can select more than one forum by clicking CTRL.',
 
+	'FAILED_LOGINS_COUNTER' => 'Failed Logins Counter',
+
+	'ACP_USER_POSTS_EXPORT_TITLE' => 'Posts Export',
+	'ACP_USER_POSTS_EXPORT_EXPLAIN' => 'This tool can be used to export all posts for one or more users',
+	'UPE_TITLE' => 'Posts Export',
+	'UPE_USER_IDS' => 'User IDS',
+	'UPE_USER_IDS_EXPLAIN' => 'Please use comma to separate users in the list (i.e.: 1,2,3,5,7)',
+	'UPE_USER_IDS_JQ' => 'Search User',
+	'UPE_USER_IDS_JQ_EXPLAIN' => 'Ajax search for users, start typing username and a list of available usernames will be returned on left column below. You can drag and drop all the users you need into the second column.',
+	'UPE_USER_IDS_JQ_LIST' => 'Userlist',
+	'UPE_USER_IDS_JQ_LIST_EXPLAIN' => 'Start typing username in the SEARCH USER box, then drag and drop from the left column to the right column the users you want to export their posts. The left column contains results of the AJAX search, while the right column contains the all users selected for posts exporting.',
+	'UPE_PROCESSING' => 'Export in progress... please do not close the browser!',
+	'UPE_PROCESSING_CURRENT_LOOP' => 'Processing:',
+	'UPE_NO_USER' => 'No User',
+	'UPE_EXPORT_COMPLETE' => 'Export Complete!',
+	'UPE_LIMIT' => 'Posts Limit Per Cycle',
+	'UPE_LIMIT_EXPLAIN' => 'Maximum amount of posts to be exported per cycle',
+	'UPE_POSTS_TYPE' => 'Posts type',
+	'UPE_POSTS_TYPE_EXPLAIN' => 'Select if exporting all posts or only first post for all topics started',
+	'UPE_POSTS_TYPE_TOPICS' => 'Topics Only',
+	'UPE_POSTS_TYPE_ALL' => 'All Posts',
+	'UPE_IN_PROGRESS_REDIRECT' => 'You will be automatically redirected to next step in three seconds',
+	'UPE_IN_PROGRESS_REDIRECT_CLICK' => 'If you are not automatically redirected within three seconds you may click %sHere%s',
+	'UPE_COMPLETE_REDIRECT_CLICK' => 'Click %sHere%s to return to Posts Export',
+	'UPE_FILES_LIST' => 'Posts Export - Archive',
+	'UPE_FILES_LIST_SELECT' => 'Select a file',
+	'UPE_FILES_LIST_SELECT_EXPLAIN' => 'You can select one file and download or delete it',
+	'UPE_FILES_LIST_DOWNLOAD' => 'Download',
+	'UPE_FILES_LIST_DELETE' => 'Delete',
+	'UPE_FILES_LIST_DELETE_SELECTED' => 'Are you sure you want to delete the selected file?',
+	'UPE_FILES_LIST_DELETED' => 'The selected file has been deleted succesfully',
+	'UPE_FILES_LIST_INVALID' => 'File not valid',
+
+
 // ####################### [ Icy Phoenix Options BEGIN ] #####################
 	'IP_CONFIGURATION' => 'Icy Phoenix Settings',
 	'IP_CONFIGURATION_EXPLAIN' => '<em><b>Advanced Icy Phoenix Settings</b></em>',
@@ -2142,7 +2195,7 @@ $lang['230_PHP_INFO'] = 'PHP Info'; // admin_phpinfo.php
 $lang['240_GD_Info'] = 'GD Info'; // admin_gd_info.php
 
 // General
-$lang['1100_General'] = 'General'; // admin_acronyms.php, admin_autolinks.php, admin_force_read.php, admin_helpdesk.php, admin_liw.php, admin_force_read.php, admin_mass_email.php, admin_megamail.php, admin_notepad.php, admin_quick_title.php, admin_smilies.php, admin_words.php, admin_yahoo_search.php, admin_lang_user_created.php
+$lang['1100_General'] = 'General'; // admin_acronyms.php, admin_autolinks.php, admin_force_read.php, admin_helpdesk.php, admin_liw.php, admin_force_read.php, admin_mass_email.php, admin_megamail.php, admin_notepad.php, admin_topics_labels.php, admin_smilies.php, admin_words.php, admin_yahoo_search.php, admin_lang_user_created.php
 $lang['130_Mass_Email'] = 'Mass Email'; // admin_mass_email.php
 $lang['140_Mega_Mail'] = 'Mass Email / PM'; // admin_megamail.php
 $lang['150_Custom_BBCodes'] = 'Custom BBCodes'; // admin_bbcodes.php
@@ -2155,6 +2208,9 @@ $lang['210_Help_Desk'] = 'Help Desk'; // admin_helpdesk.php
 $lang['220_Tickets_Emails'] = 'Emails Categories'; // admin_tickets.php
 $lang['230_Language'] = 'Custom Lang Vars'; // admin_lang_user_created.php
 
+// CMS
+$lang['1150_CMS'] = 'CMS'; // cms.php
+
 // Forum
 $lang['1200_Forums'] = 'Forum'; // admin_forum_prune.php, admin_forumauth_list.php, admin_forums.php, admin_forums_extend.php, admin_prune_overview.php, admin_topic_shadow.php
 $lang['100_Manage'] = 'Management'; // admin_forums.php
@@ -2165,7 +2221,7 @@ $lang['125_Permissions_Forum'] = 'Permissions'; // admin_forumauth.php
 $lang['130_Prune'] = 'Pruning'; // admin_forum_prune.php
 $lang['140_Prune_Overview'] = 'Prune Overview'; // admin_prune_overview.php
 $lang['150_Topic_Shadow'] = 'Shadow Topics'; // admin_topic_shadow.php
-$lang['160_Title_infos'] = 'Quick Title Management'; // admin_quick_title.php
+$lang['160_Topics_Labels'] = 'Topics Labels'; // admin_topics_labels.php
 $lang['170_Topic_Rating_Config'] = 'Topic Rating Config'; // admin_rate.php
 $lang['180_Topic_Rating_Auth'] = 'Topic Rating Permissions'; // admin_rate.php
 $lang['240_Replace_title'] = 'Replace In Posts'; // admin_replace.php
@@ -2218,6 +2274,7 @@ $lang['270_CPF_Edit'] = 'Edit Custom Profile Fields'; // admin_profile_fields.ph
 $lang['280_User_Search'] = 'Extended User Search'; // admin_user_search.php
 $lang['290_Poll_Results'] = 'Poll Results'; // admin_voting.php
 $lang['300_Picscount_Config'] = 'Sync Pics Count'; // admin_postcount.php
+$lang['310_POSTS_EXPORT'] = 'Posts Export'; // admin_user_posts_export.php
 
 // Groups
 $lang['1620_Groups'] = 'Groups'; // admin_color_groups.php, admin_groups.php, admin_ug_auth.php

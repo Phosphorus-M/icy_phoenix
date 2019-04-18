@@ -85,6 +85,12 @@ $sort_dir = strtolower(request_var('sd', $default_sort_dir));
 $sort_dir = check_var_value($sort_dir, $sort_dir_array);
 $sort_dir_sql = $sort_dir_sql_array[$sort_dir];
 
+// only fetch post higher than a certain post_id. Maybe this should use post_time, as $sort_key_sql_array uses post_time
+$after_post_id = request_var('after_post_id', 0);
+// make sure we can't fetch negative indices. 0 = disabled
+if ($after_post_id < 0)
+	$after_post_id = 1;
+
 // Backward compatibility
 if (check_http_var_exists('postorder', true))
 {
@@ -270,7 +276,7 @@ $count_sql = (!$post_id ? '' : (", COUNT(p2.post_id) AS prev_posts"));
 $order_sql = (!$post_id ? '' : ("GROUP BY p.post_id, t.topic_id, t.topic_title, t.topic_status, t.topic_replies, t.topic_time, t.topic_type, t.poll_start, t.topic_last_post_id, f.forum_name, f.forum_status, f.forum_id, f.auth_view, f.auth_read, f.auth_post, f.auth_reply, f.auth_edit, f.auth_delete, f.auth_sticky, f.auth_announce, f.auth_pollcreate, f.auth_vote, f.auth_attachments, f.auth_ban, f.auth_greencard, f.auth_bluecard ORDER BY p.post_id ASC"));
 
 // Let's try to query all fields for topics and forums... it should not require too much resources as we are querying only one row
-//$sql = "SELECT t.topic_id, t.topic_title, t.topic_status, t.topic_replies, t.topic_time, t.topic_type, t.poll_start, t.topic_last_post_id, t.title_compl_infos, t.topic_first_post_id, t.topic_calendar_time, t.topic_calendar_duration, t.topic_reg, t.topic_similar_topics, f.forum_name, f.forum_status, f.forum_id, f.forum_similar_topics, f.forum_topic_views, f.forum_kb_mode, f.auth_view, f.auth_read, f.auth_post, f.auth_reply, f.auth_edit, f.auth_delete, f.auth_sticky, f.auth_announce, f.auth_pollcreate, f.auth_vote, f.auth_attachments, f.auth_ban, f.auth_greencard, f.auth_bluecard" . $count_sql . "
+//$sql = "SELECT t.topic_id, t.topic_title, t.topic_status, t.topic_replies, t.topic_time, t.topic_type, t.poll_start, t.topic_last_post_id, t.topic_label_compiled, t.topic_first_post_id, t.topic_calendar_time, t.topic_calendar_duration, t.topic_reg, t.topic_similar_topics, f.forum_name, f.forum_status, f.forum_id, f.forum_similar_topics, f.forum_topic_views, f.forum_kb_mode, f.auth_view, f.auth_read, f.auth_post, f.auth_reply, f.auth_edit, f.auth_delete, f.auth_sticky, f.auth_announce, f.auth_pollcreate, f.auth_vote, f.auth_attachments, f.auth_ban, f.auth_greencard, f.auth_bluecard" . $count_sql . "
 $sql = "SELECT t.*, f.*, u.*" . $count_sql . "
 	FROM " . TOPICS_TABLE . " t, " . FORUMS_TABLE . " f," . USERS_TABLE . " u" . $join_sql_table . "
 	WHERE $join_sql
@@ -301,7 +307,7 @@ $topic_title_data = $class_topics->generate_topic_title($topic_id, $forum_topic_
 $topic_title = $topic_title_data['title'];
 $topic_title_clean = $topic_title_data['title_clean'];
 $topic_title_plain = $topic_title_data['title_plain'];
-$topic_title_prefix = $topic_title_data['title_prefix'];
+$topic_title_label = $topic_title_data['title_label'];
 $topic_title_short = $topic_title_data['title_short'];
 
 // Topic poster information
@@ -564,9 +570,19 @@ if(!empty($sort_days))
 	$result = $db->sql_query($sql);
 	$total_replies = ($row = $db->sql_fetchrow($result)) ? intval($row['num_posts']) : 0;
 	$limit_posts_time = "AND p.post_time >= " . $min_post_time . " ";
+	$limit_sql = " LIMIT " . $config['posts_per_page'];
+}
+else if ($after_post_id > 0)
+{
+	// TODO make it after_post_time?
+	$limit_posts_time = "AND p.post_id > " . intval($after_post_id) . " ";
+	$sort_days = 0;
+	$total_replies = intval($forum_topic_data['topic_replies']) + 1;
+	$limit_sql = " LIMIT " . $config['posts_per_page'];
 }
 else
 {
+	$limit_sql = " LIMIT " . $start . ", " . $config['posts_per_page'];
 	$sort_days = 0;
 	$total_replies = intval($forum_topic_data['topic_replies']) + 1;
 	$limit_posts_time = '';
@@ -640,16 +656,15 @@ foreach ($user_sn_im_array as $k => $v)
 	$sn_im_sql .= ', u.' . $v['field'];
 }
 
-$sql = "SELECT u.username, u.user_id, u.user_active, u.user_mask, u.user_color, u.user_first_name, u.user_last_name, u.user_posts, u.user_from, u.user_from_flag, u.user_website, u.user_email, u.user_regdate, u.user_allow_viewemail, u.user_rank, u.user_rank2, u.user_rank3, u.user_rank4, u.user_rank5, u.user_sig, u.user_avatar, u.user_avatar_type, u.user_allowavatar, u.user_allowsmile, u.user_allow_viewonline, u.user_session_time, u.user_warnings, u.user_level, u.user_birthday, u.user_next_birthday_greeting, u.user_gender, u.user_personal_pics_count, u.user_style, u.user_lang" . $sn_im_sql . $activity_sql . $profile_data_sql . ", u.ct_miserable_user, p.*, t.topic_poster, t.title_compl_infos
+$sql = "SELECT u.username, u.user_id, u.user_active, u.user_mask, u.user_color, u.user_first_name, u.user_last_name, u.user_posts, u.user_from, u.user_from_flag, u.user_website, u.user_email, u.user_regdate, u.user_allow_viewemail, u.user_rank, u.user_rank2, u.user_rank3, u.user_rank4, u.user_rank5, u.user_sig, u.user_avatar, u.user_avatar_type, u.user_allowavatar, u.user_allowsmile, u.user_allow_viewonline, u.user_session_time, u.user_warnings, u.user_level, u.user_birthday, u.user_next_birthday_greeting, u.user_gender, u.user_personal_pics_count, u.user_style, u.user_lang" . $sn_im_sql . $activity_sql . $profile_data_sql . ", u.ct_miserable_user, p.*, t.topic_poster, t.topic_label_compiled
 	FROM " . POSTS_TABLE . " p, " . USERS_TABLE . " u, " . TOPICS_TABLE . " t" . $self_sql_tables . "
 	WHERE p.topic_id = $topic_id
 		AND t.topic_id = p.topic_id
 		AND u.user_id = p.poster_id
 		" . $limit_posts_time . "
 		" . $self_sql . "
-	ORDER BY " . $sort_key_sql . " " . $sort_dir_sql . "
-	LIMIT " . $start . ", " . $config['posts_per_page'];
-
+	ORDER BY " . $sort_key_sql . " " . $sort_dir_sql
+	. $limit_sql;
 // MG Cash MOD For IP - BEGIN
 if (!empty($config['plugins']['cash']['enabled']))
 {
@@ -847,7 +862,9 @@ if ($config['display_viewonline'])
 	define('SHOW_ONLINE', true);
 }
 
-$meta_content['page_title'] = $meta_content['forum_name'] . ' :: ' . $topic_title_plain;
+//$meta_content['page_title'] = $meta_content['forum_name'] . ' :: ' . $topic_title_plain;
+//$meta_content['page_title'] = str_replace(array('"'), array('\"'), htmlspecialchars_decode($topic_title_plain));
+$meta_content['page_title'] = $topic_title_plain;
 $meta_content['page_title_clean'] = $topic_title_plain;
 $template->assign_var('S_VIEW_TOPIC', true);
 if ($config['show_icons'] == true)
@@ -965,49 +982,22 @@ if ($is_auth['auth_mod'])
 	}
 }
 
-// Topic prefixes
+// Topics Labels - BEGIN
 //if (!(($user->data['user_level'] == 0) && ($user->data['user_id'] != $row['topic_poster'])))
 if ($is_auth['auth_edit'] || ($user->data['user_id'] == $row['topic_poster']))
 {
-	// Temporary allow all BBCode for Quick Title, and store current vars to temp arrays
-	$bbcode_allow_html_tmp = $bbcode->allow_html;
-	$bbcode_allow_bbcode_tmp = $bbcode->allow_bbcode;
-	$bbcode_allow_smilies_tmp = $bbcode->allow_smilies;
-	$bbcode->allow_html = true;
-	$bbcode->allow_bbcode = true;
-	$bbcode->allow_smilies = true;
+	$topics_labels_select = $class_topics->gen_topics_labels_select();
 
-	$topic_prefixes = $class_topics->get_topic_prefixes();
-	$qt_select_data = '';
-	foreach ($topic_prefixes as $qt_id => $qt_data)
-	{
-		$qt_html = !empty($qt_data['title_html']) ? true : false;
-		$qt_title_prefix = !empty($qt_data['title_html']) ? $bbcode->parse($qt_data['title_html']) : $qt_data['title_info'];
-		$qt_title_prefix = str_replace('%mod%', $user->data['username'], $qt_title_prefix);
-		$qt_date = ($qt_data['date_format'] == '') ? create_date($config['default_dateformat'], time(), $config['board_timezone']) : create_date($qt_data['date_format'], time(), $config['board_timezone']);
-		$qt_title_prefix = str_replace('%date%', $qt_date, $qt_title_prefix);
-		$qt_title_prefix = !empty($qt_html) ? $qt_title_prefix : htmlspecialchars($qt_title_prefix);
-		$qt_select_data .= '<option value="' . $qt_data['id'] . '">' . $qt_title_prefix . '</option>';
-	}
+	$topic_labels_block = '<form action="modcp.' . PHP_EXT . '?sid=' . $user->data['session_id'] . '" method="post"><br /><br />';
+	$topic_labels_block .= $topics_labels_select;
+	$topic_labels_block .= '<input type="submit" name="label_edit" class="liteoption" value="' . $lang['TOPIC_LABEL'] . '"/>';
+	$topic_labels_block .= '<input type="hidden" name="' . POST_FORUM_URL . '" value="' . $forum_id . '"/>';
+	$topic_labels_block .= '<input type="hidden" name="' . POST_TOPIC_URL . '" value="' . $topic_id . '"/>';
+	$topic_labels_block .= '</form>';
 
-	// Restore BBCode status...
-	$bbcode->allow_html = $bbcode_allow_html_tmp;
-	$bbcode->allow_bbcode = $bbcode_allow_bbcode_tmp;
-	$bbcode->allow_smilies = $bbcode_allow_smilies_tmp;
-
-	$qt_select_box = '<form action="modcp.' . PHP_EXT . '?sid=' . $user->data['session_id'] . '" method="post"><br /><br />';
-	$qt_select_box .= '<select name="qt_id">';
-	$qt_select_box .= '<option value="0">---</option>';
-	$qt_select_box .= $qt_select_data;
-	$qt_select_box .= '</select>&nbsp;';
-	$qt_select_box .= '<input type="submit" name="quick_title_edit" class="liteoption" value="' . $lang['Edit_title'] . '"/>';
-	$qt_select_box .= '<input type="hidden" name="' . POST_FORUM_URL . '" value="' . $forum_id . '"/>';
-	$qt_select_box .= '<input type="hidden" name="' . POST_TOPIC_URL . '" value="' . $topic_id . '"/>';
-	$qt_select_box .= '</form>';
-
-	$topic_mod .= $qt_select_box;
-	$topic_prefix_select = $qt_select_box;
+	$topic_mod .= $topic_labels_block;
 }
+// Topics Labels - END
 
 $s_kb_mode_url = append_sid(CMS_PAGE_VIEWTOPIC . '?' . $forum_id_append . '&amp;' . $topic_id_append . '&amp;kb=' . (!empty($kb_mode) ? 'off' : 'on') . '&amp;start=' . $start);
 $s_kb_mode_l = (!empty($kb_mode) ? $lang['KB_MODE_OFF'] : $lang['KB_MODE_ON']);
@@ -1142,6 +1132,13 @@ $topic_url_enc = urlencode(ip_utf8_decode($topic_url));
 $topic_url_enc_utf8 = urlencode($topic_url);
 // URL Rewrite - END
 
+$current_page = (floor($start / intval($config['posts_per_page'])) + 1);
+$max_page = ceil($total_replies / intval($config['posts_per_page']));
+$ajax_post_data = array(
+	'S_TOPIC_URL_AFTER' => append_sid(CMS_PAGE_VIEWTOPIC . '?' . $forum_id_append . '&' . $topic_id_append . '&after_post_id='),
+	'L_WARN_NEW_POST' => $lang['Warn_new_post'],
+	'REFRESH_INTERVAL' => $config['auto_refresh_topic_interval'],
+);
 $template->assign_vars(array(
 	'FORUM_ID' => $forum_id,
 	'FORUM_ID_FULL' => POST_FORUM_URL . $forum_id,
@@ -1152,6 +1149,7 @@ $template->assign_vars(array(
 	'TOPIC_TITLE' => $topic_title,
 	'TOPIC_TITLE_PLAIN' => $topic_title_plain,
 	'TOPIC_TITLE_SHORT' => $topic_title_short,
+	'TOPIC_TITLE_QR' => str_replace(array('"'), array('\"'), htmlspecialchars_decode($topic_title_plain)),
 
 	'TOPIC_POSTED_TIME' => $topic_started,
 	'TOPIC_AUTHOR_NAME' => $topic_username,
@@ -1164,7 +1162,12 @@ $template->assign_vars(array(
 	'TOPIC_REPLIES' => $forum_topic_data['topic_replies'],
 
 	'PAGINATION' => $pagination,
-	'PAGE_NUMBER' => sprintf($lang['Page_of'], (floor($start / intval($config['posts_per_page'])) + 1), ceil($total_replies / intval($config['posts_per_page']))),
+	'CURRENT_PAGE_NUMBER' => $current_page,
+	'MAX_PAGE_NUMBER' => $max_page,
+	'IS_LAST_PAGE' => $current_page == $max_page,
+	'PAGE_NUMBER' => sprintf($lang['Page_of'], $current_page, $max_page),
+
+	'AJAX_POST_DATA' => json_encode($ajax_post_data),
 
 	'POST_IMG' => $post_img,
 	'REPLY_IMG' => $reply_img,
@@ -1249,7 +1252,7 @@ $template->assign_vars(array(
 
 	'S_TMOD_BUTTONS' => !empty($topic_mod_switch) ? true : false,
 	'S_TMOD_BIN' => !empty($config['bin_forum']) ? true : false,
-	'S_TMOD_TOPIC_PREFIX_SELECT' => $topic_prefix_select,
+	'S_TMOD_TOPIC_LABELS_BLOCK' => $topic_labels_block,
 	'S_TMOD_TOPIC_UNLOCKED' => ($forum_topic_data['topic_status'] == TOPIC_UNLOCKED) ? true : false,
 	'S_TMOD_TOPIC_GLOBAL' => !empty($s_tmod_topic_global) ? true : false,
 	'S_TMOD_TOPIC_GLOBAL_AUTH' => $is_auth['auth_globalannounce'] ? true : false,
@@ -1367,6 +1370,7 @@ if (empty($config['disable_likes_posts']) && $forum_topic_data['forum_likes'] &&
 $feedback_disabled = true;
 if (!empty($config['plugins']['feedback']['enabled']) && !empty($config['plugins']['feedback']['dir']))
 {
+	$plugin_name = 'feedback';
 	include(IP_ROOT_PATH . PLUGINS_PATH . $config['plugins']['feedback']['dir'] . 'common.' . PHP_EXT);
 	$feedback_allowed_forums = explode(',', PLUGINS_FEEDBACK_FORUMS);
 	$feedback_disabled = false;
@@ -2143,7 +2147,7 @@ for($i = 0; $i < $total_posts; $i++)
 		$single_post_number = $i + 1 + $start;
 	}
 	// Keep first post on every page - END
-	$single_post = ($user->data['is_bot'] ? ('#' . $single_post_number) : ('<a href="#_Single_Post_View" onclick="open_postreview(\'show_post.' . PHP_EXT . '?' . POST_POST_URL . '=' . intval($post_id) . '\'); return false;" style="text-decoration: none;">#' . $single_post_number . '</a>'));
+	$single_post = ($user->data['is_bot'] ? ('#' . $single_post_number) : ('<a href="#_Single_Post_View" class="single-post-number" onclick="open_postreview(\'show_post.' . PHP_EXT . '?' . POST_POST_URL . '=' . intval($post_id) . '\'); return false;" style="text-decoration: none;">#' . $single_post_number . '</a>'));
 	$single_post_share = '<a href="#" onclick="popup(\'share.' . PHP_EXT . '?' . POST_POST_URL . '=' . intval($post_id) . '\', 840, 420, \'_post_share\'); return false;" style="text-decoration: none;">' . $lang['SHARE'] . '</a>';
 	$single_post_like_list = ($user->data['session_logged_in'] ? ('<a href="#" onclick="popup(\'topic_view_users.' . PHP_EXT . '?like=1&amp;' . POST_POST_URL . '=' . intval($post_id) . '\', 840, 420, \'_post_like\'); return false;" style="text-decoration: none;" title="' . $lang['LIKE_RECAP'] . '">' . '{USERS_LIKE}' . '</a>') : '{USERS_LIKE}');
 
